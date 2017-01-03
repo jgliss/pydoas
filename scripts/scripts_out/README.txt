@@ -1,0 +1,1 @@
+In this folder, the output of all example scripts is stored

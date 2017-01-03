@@ -1,0 +1,49 @@
+Create new import specifications based on your text file format. The result files need to have a header row which is used to identify the relevant data columns. Please leave irrelevant fields empty (some are specific for DOASIS format, e.g. geom - a string containing information about solar zenith angle etc.). Hashs (#) can be used for commenting. If you create a new 
+type, please make a copy of the following empty mask and fill the relevant
+fields.
+
+NEWTYPE
+type: # the name of this import type within the code environment
+file_type: # file type of your result files
+delim: #file column delimiter
+time_str_formats: # if several, separate by commas (,)
+start: # header string to identify spectrum start time column
+stop: # header string to identify spectrum stop time column
+texp: # header string to identify spectrum exposure time column
+num_scans: # header string to identify column with info about added spectra
+azim: # header string to identify column with azimuth angles
+elev: # header string to identify column with elevation angles
+lat: # header string to identify column with latitudes of instrument
+lon: # header string to identify column with longitudes of instrument
+geom: # header string to identify column with solar position info
+chi2: # header string to identify column with fit chi2
+delta: # header string to identify column with fit delta
+rms: # header string to identify column with fit RMS
+fit_low: # header string to identify column with lower fit boundary
+fit_high: # header string to identify column with upper fit boundary
+species_pre_string: #pre string in header for fit results 
+fit_err_add_col: #number speifying relative column for species fit error
+ENDTYPE
+
+NEWTYPE
+type:doasis
+file_type:dat
+delim:\t
+time_str_formats:%d/%m/%Y %I:%M:%S %p,%Y-%m-%d %H:%M:%S
+start:StartDateAndTime
+stop:StopDateAndTime
+texp:ExposureTime
+num_scans:NumScans
+azim:Azimuth
+elev:Elevation
+lat:Latitude
+lon:Longitude
+geom:ScanGeometry
+chi2:Chi Square
+delta:Delta
+rms:RMS
+fit_low:FitLow
+fit_high:FitHigh
+species_pre_string: Fit Coefficient (
+fit_err_add_col: 1 
+ENDTYPE
