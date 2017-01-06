@@ -26,7 +26,8 @@ setup(
 #    data_files = [('scripts', ['scripts/*.py'])],
                   
     install_requires    =   ["numpy",
-                             "pandas"],
+                             "pandas",
+                             "sphinxcontrib-images"],
     dependency_links    =   [],
     description = ("A Python toolbox for import and analysis of DOAS "
             "(Differential Optical Absorbtion Spectroscopy) results"),
