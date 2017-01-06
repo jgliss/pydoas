@@ -65,7 +65,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pxdoas'
+project = u'pydoas'
 copyright = u'2016, Jonas Gliss'
 author = u'Jonas Gliss'
 
