@@ -6,8 +6,6 @@
 Welcome to pydoas's documentation!
 ==================================
 
-Please read the preface information first.
-
 **Contents:**
 
 .. toctree::
