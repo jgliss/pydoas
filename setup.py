@@ -15,7 +15,7 @@ setup(
     version     =   '1.0.0',
     author      =   'Jonas Gliss',
     author_email=   'jg@nilu.no',
-    url         =   'https://github.com/jgliss/pydoas.git'
+    url         =   'https://github.com/jgliss/pydoas.git',
     license     =   'BSD3',
     package_dir =   {'pydoas'     :   'pydoas'},
     packages    =   find_packages(exclude=['contrib', 'docs', 'tests*']),
