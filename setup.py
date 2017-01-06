@@ -15,6 +15,7 @@ setup(
     version     =   '1.0.0',
     author      =   'Jonas Gliss',
     author_email=   'jg@nilu.no',
+    url         =   'https://github.com/jgliss/pydoas.git'
     license     =   'BSD3',
     package_dir =   {'pydoas'     :   'pydoas'},
     packages    =   find_packages(exclude=['contrib', 'docs', 'tests*']),
@@ -27,7 +28,7 @@ setup(
     install_requires    =   ["numpy",
                              "pandas"],
     dependency_links    =   [],
-    description = ("A Python toolbox for the analysis of DOAS (Differential"
-            "Optical Absorbtion Spectroscopy) results"),
+    description = ("A Python toolbox for import and analysis of DOAS "
+            "(Differential Optical Absorbtion Spectroscopy) results"),
     long_description = readme,
 )
