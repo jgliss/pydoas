@@ -10,62 +10,81 @@ from .inout import get_import_info
 
 class ResultImportSetup(object):
     """Setup class for spectral result imports from text like files """
-    def __init__(self, base_path = None, start = None, stop = None,\
-                result_import_dict = {}, default_dict = {},\
-                doas_fit_err_factors = {}, res_type = "doasis", dev_id = "",\
-                lt_to_utc_offset = timedelta(0.0)):
+    def __init__(self, base_path = None, start = datetime(1900, 1, 1),\
+                 stop = datetime(3000, 1, 1), meta_import_info = "doasis",\
+                 result_import_dict = {}, default_dict = {},\
+                 doas_fit_err_factors = {}, dev_id = "",\
+                 lt_to_utc_offset = timedelta(0.0)):
         """
+        :param str base_path: folder containing resultfiles
+        :param datetime start: time stamp of first spectrum
+        :param datetime stop: time stamp of last spectrum
+        
+        :param meta_import_info: Specify the result file format and columns
+            for meta information (see als file import_info.txt or example
+            script 2). Input can be str or dict. In case a string is 
+            provided, it is assumed, that the specs are defined in 
+            import_info.txt, i.e. can be imported (as dictionary) 
+            from this file (using :func:`get_import_info`, e.g. with arg = 
+            ``doasis``). If a dictionary is provided, the information is 
+            directly set from the provided dictionary. 
+                
         :param dict result_import_dict: specify file and header information for 
-            import. Keys define the used abbreveations after import, the values 
-            to each key consist of a list with 2 elements: the first specifies 
-            the UNIQUE string which is used to identify this species in the
-            header of a given Fit result file, the second entry is a list with 
-            arbitrary length containing the fit scenario IDs defining from 
-            which fit scenario result files this specific species is to be 
-            extracted.
+            import. Keys define the used abbreveations after import, the 
+            values to each key consist of a list with 2 elements: the first 
+            specifies the UNIQUE string which is used to identify this 
+            species in the header of a given Fit result file, the second 
+            entry is a list with arbitrary length containing the fit 
+            scenario IDs defining from which fit scenario result files this 
+            specific species is to be extracted.
         
             Example::
             
                 result_import_dict = {"so2" : ['SO2_Hermans', ['f01','f02']],
                                       "o3"  : ['o3_burrows'], ['f01']]}
             
-            Here ``so2`` and "o3" are imported, the data column
-            in the result files is found by the header string 
-            ``'SO2_Hermans'`` / ``'o3_burrows'`` and this species is imported 
-            from all fit scenario result files with fit Ids ``["f01", "f02"]`` 
+            Here ``so2`` and "o3" are imported, the data column in the 
+            result files is found by the header string ``'SO2_Hermans'`` / 
+            ``'o3_burrows'`` and this species is imported from all fit 
+            scenario result files with fit Ids ``["f01", "f02"]`` 
             (UNIQUE substrings in FitScenario file names.
             
-            This is how a filename could look like:
+            Exemplary file name:
             
-                *D130909_S0628_i6_f19_r20_f01so2.dat*
+                ``D130909_S0628_i6_f19_r20_f01so2.dat``
                 
-            This exemplary filename convention is used by the author of this 
-            library when performing an automated DOAS analysis using DOASIS 
-            software package `DOASIS 
-            <https://doasis.iup.uni-heidelberg.de/bugtracker/projects/doasis/>`_.
+            This (exemplary) filename convention is used for the example 
+            result files shipped with this package (see folder 
+            pydoas/data/doasis_resultfiles) which include fit result files
+            from the software `DOASIS <https://doasis.iup.uni-heidelberg.
+            de/bugtracker/projects/doasis/>`_.
             
-            The delimiter for retrieving info from these file names is "_", the first
-            substring provides info about the date (day), the second about the start 
-            time of this time series (HH:MM), 3rd, 4th and 5th information about first 
-            and last fitted spectrum number and the corresponding number of the 
-            reference spectrum used for this time series and the last index about the
-            fit scenario (fitID).
+            The delimiter for retrieving info from these file names is "_", 
+            the first substring provides info about the date (day), the 
+            second about the start time of this time series (HH:MM), 3rd, 
+            4th and 5th information about first and last fitted spectrum 
+            number and the corresponding number of the reference spectrum 
+            used for this time series and the last index about the fit 
+            scenario (fitID).
             
-            To make a long story short: 
-            
-                *for this input routine you only need a hint about the used fit 
-                scenario in the filename*
+            Each resultfile must therefore include a unique ID in the file
+            name by which it can be identified.
         
-        :param dict default_dict: specify default species, e.g.::
+        :param dict default_dict: specify default species,
+            e.g.::
         
-            dict_like = {"so2"     :   "f02",
-                         "o3"      :   "f01"}
+                dict_like = {"so2"     :   "f02",
+                             "o3"      :   "f01"}
                         
-        :param dict doas_fit_err_factors: fit correction factors (i.e. factors by which
-            the DOAS fit error is increased)
-            
-            dict_like = {"so2"     :   "f02",
-                         "o3"      :   "f01"}
+        :param dict doas_fit_err_factors: fit correction factors 
+            (i.e. factors by which the DOAS fit error is increased)::
+                
+                dict_like = {"so2"     :   "f02",
+                             "o3"      :   "f01"}
+                             
+        :param str dev_id: string ID for DOAS device (of minor importance)
+        :param timedelta lt_to_utc_offset: specify time zone offset (will 
+            be added on data import if applicable).
                         
         
         """
@@ -76,16 +95,34 @@ class ResultImportSetup(object):
         self.lt_to_utc_offset = lt_to_utc_offset
         
         self.dev_id = dev_id
-        self.res_type = res_type
         
         self.import_info = result_import_dict
+        self.meta_import_info = {}
         self.default_fit_ids = {}
         self.doas_fit_err_factors = {}
         
         self.check_time_stamps()
         
+        self.minimum_meta_keys = ["start", "delim", "access_type",\
+                        "has_header_line", "file_type", "time_str_formats"]
         self.set_defaults(default_dict)
         self.set_fitcorr_factors(doas_fit_err_factors)
+        
+        if isinstance(meta_import_info, str):
+            self.meta_import_info.update(get_import_info(meta_import_info))
+        elif isinstance(meta_import_info, dict):
+            self.meta_import_info.update(meta_import_info)
+        
+        if not all([x in self.meta_import_info.keys() for x in\
+                                            self.minimum_meta_keys]):
+            raise ImportError("Please specify at least the following "
+                "parameters: %s, available keys are: %s" 
+                %(self.minimum_meta_keys, self.meta_import_info.keys()))
+        if self.access_type == "header_str" and not\
+                    self.meta_import_info["has_header_line"]:
+            raise Exception("Invalid combination of result file settings: "
+                "has_header_line == False and access_type == header_str")
+        
     
     def set_basepath(self, path):
         """Set the current basepath of the result files"""
@@ -144,7 +181,9 @@ class ResultImportSetup(object):
         return True
         
     def set_defaults(self, dict_like):
-        """Update default fit IDs for fitted species, scheme::
+        """Update default fit IDs for fitted species
+        
+        Scheme::
         
             dict_like = {"so2"     :   "f02",
                          "o3"      :   "f01"}
@@ -222,6 +261,26 @@ class ResultImportSetup(object):
     def fit_ids(self):
         """Returns list with all fit ids"""
         return self.get_fit_ids()
+    
+    @property
+    def access_type(self):
+        """Return the current setting for data access type"""
+        return self.meta_import_info["access_type"]
+    
+    @property
+    def HEADER_ACCESS_OPT(self):
+        """Checks if current settings allow column identification from file
+        header line"""
+        if self.access_type == "header_str" and\
+                    self.meta_import_info["has_header_line"]:
+            return True
+        return False
+    
+    @property
+    def FIRST_DATA_ROW_INDEX(self):
+        if self.meta_import_info["has_header_line"]:
+            return 1
+        return 0
         
     def get_fit_ids(self):
         """Get all fit id abbreveations
@@ -267,34 +326,20 @@ class ResultImportSetup(object):
 class DataImport(object):
     """A class providing reading routines of DOAS result files 
     
-    Here, it is assumed, that the results are stored in FitResultFiles, tab 
-    delimited whereas the columns correspond to the different variables 
-    (i.e. fit results, metainfo, ...) and the rows to the individual spectra.
-    General remarks:
-    
-        1. In general, it is assumed, that the data was evaluated using the
-        implemented DOASIS function *fit.AppendResultToFile* in DOASIS (fit 
-        corresponds to a "DoasFit class" object)
-        
-            i. A header (0-th row in file) containing information about 
-            parameters
-            #. All the other rows correspond to individual spectra
-            #. The columns correspond to individual parameters
-             
+    Here, it is assumed, that the results are stored in FitResultFiles, 
+    tab delimited whereas the columns correspond to the different variables 
+    (i.e. fit results, metainfo, ...) and the rows to the individual 
+    spectra.
     """
-    def __new__(cls, setup):
+    def __init__(self, setup = None):
         if not isinstance(setup, ResultImportSetup):
-            raise TypeError("DataImport instance could not be created")
-        return super(DataImport, cls).__new__(cls,setup)
-    
-    def __init__(self, setup):
+            setup = ResultImportSetup()
         self.setup = setup
         
         self.file_type = None
         self.delim = "\t"
         
         self.species_pre_string = ""
-        self.fit_err_add_col = 1
         
         self._import_conv_funcs = {"fit_err_add_col" : int}
         
@@ -339,23 +384,25 @@ class DataImport(object):
 
         
     def load_result_type_info(self):
-        """Load import information for result type specified in ``self.setup``
+        """Load import information for result type specified in setup
         
         The detailed import information is stored in the package data file
         import_info.txt, this file can also be used to create new filetypes
         """
-        info = get_import_info(self.setup.res_type)
+        info = self.setup.meta_import_info
+        #info = get_import_info(self.setup.res_type)
         for k,v in info.iteritems():
             self[k] = v
     
     def _update_attribute(self, key, val):
         """Update one of the attributes
         
-        Checks if key is class attribute or - alternatively - a valid meta key
-        (i.e. key of ``self._meta_ids``) and if so, checks if a specific
-        data type for this attribute is required (in ``self._type_dict``). If
-        the latter is the case, the input value will only be set if it can be
-        converted given the specific type conversion. 
+        Checks if key is class attribute or - alternatively - a valid meta 
+        key (i.e. key of ``self._meta_ids``). If so, checks if a 
+        specific data type for this attribute is required (in 
+        ``self._type_dict``). If the latter is the case, the input value 
+        will only be set if it can be converted given the specific type 
+        conversion. 
         
         :param str key: valid key of class or ``self._meta_ids`` dict
         :param val: new value
@@ -366,7 +413,7 @@ class DataImport(object):
                 val = self._import_conv_funcs[key](val)
             except:
                 print ("Failed to convert input %s, %s into data type %s"
-                                    %(key, val, self._import_conv_funcs[key]))
+                       %(key, val, self._import_conv_funcs[key]))
                 return False
         if self.__dict__.has_key(key):
             self.__dict__[key] = val
@@ -374,7 +421,7 @@ class DataImport(object):
         if self._meta_ids.has_key(key):
             self._meta_ids[key] = val
             return True
-        print "Could not update attribute %s : %s" %(key, val)
+        #print "Could not update attribute %s : %s" %(key, val)
         return False
         
     @property
@@ -400,7 +447,15 @@ class DataImport(object):
         specification file (package data: data/import_info.txt)        
         """
         return self.time_str_formats[self._time_str_index]
-                   
+    
+    @property
+    def fit_err_add_col(self):
+        """Return current value for relative column of fit errors"""
+        try:
+            return self.setup.meta_import_info["fit_err_add_col"]  
+        except:
+            return 0
+            
     def init_result_dict(self):
         """Initiate the result dictionary"""
         res = {}
@@ -414,7 +469,7 @@ class DataImport(object):
                     res[fit_id][species + "_err"] = []
         self.results = res
     
-    def get_indices(self, fileheader, dict):
+    def find_valid_indices_header(self, fileheader, dict):
         """Find positions of species in header of result file
         
         :param list fileheader: header row of resultfile
@@ -423,29 +478,54 @@ class DataImport(object):
     
         """
         ind = {}
-        for key,val in dict.iteritems():
+        for key, val in dict.iteritems():
             v = self.find_col_index(val, fileheader)
             if v != -1:
                 ind[key] = v
         return ind
     
     def find_all_indices(self, fileheader, fit_id):
-        """Find all relevant indices for a fit scenario"""
+        """Find all relevant indices for a given result file (fit scenario)
+        
+        :param list fileheader: list containing all header strings from 
+            result file (not required if data access mode is from columns
+            see also :func:`HEADER_ACCESS_OPT` in 
+            :class:`ResultImportSetup`)
+        :param str fit_id: ID of fit scenario (required in order to find 
+            all fitted species supposed to be extracted, specified in 
+            ``self.setup.import_info``)
+        """
         #load all metainfo indices
         warnings = []
-        ind = self.get_indices(fileheader, self._meta_ids)
+        if self.setup.HEADER_ACCESS_OPT:
+            ind = self.find_indices_in_header(fileheader, self._meta_ids)
+        else:
+            ind = {}
+            for key, val in self._meta_ids.iteritems():
+                try:
+                    ind[key] = int(val)
+                except:
+                    pass
+        print ind        
         #now find indices of all species supposed to be extracted from this fit 
         #scenario
         for species, info in self.setup.import_info.iteritems():
             if fit_id in info[1]:
-                substr = self.species_pre_string + info[0]
-                idx = self.find_col_index(substr, fileheader)
+                if self.setup.HEADER_ACCESS_OPT:
+                    substr = self.species_pre_string + info[0]
+                    idx = self.find_col_index(substr, fileheader)
+                else:
+                    print ("set %s col for fit ID %s at column %s"
+                           %(species, fit_id, info[0]))
+                    idx = info[0] 
                 if idx != -1:                      
                     ind[species] = idx
-                    ind[species + "_err"] = ind[species] + self.fit_err_add_col
+                    ind[species + "_err"] = ind[species] +\
+                                                self.fit_err_add_col
                 else:
-                    warnings.append("Failed to find column index for species %s"
-                        " using header search string %s" %(species, substr))
+                    warnings.append("Failed to find column index for "
+                        "species %s using header search string %s" 
+                        %(species, substr))
         return ind, warnings
         
     def load_results(self):
@@ -455,9 +535,12 @@ class DataImport(object):
         valid files which were detected in :func:`get_all_files` which 
         writes ``self.file_paths``
         """
+        # delete all previous results
         self.init_result_dict()
         all_warnings = []
+        # loop over different fit IDs
         for fit_id in self.setup.fit_ids:
+            # loop over all files corresponding to one fit ID
             for file in self.file_paths[fit_id]:
                 data = self.read_text_file(file)
                 last_index = shape(data)[0]
@@ -465,26 +548,34 @@ class DataImport(object):
                 ind, warnings = self.find_all_indices(data[0], fit_id)
                 if bool(warnings):
                     all_warnings.append(warnings)
-                datetime.strptime(data[1][ind["start"]], self.time_str_format)
+                print ("First spectrum time: %s" %datetime.strptime(data[\
+                    self.setup.FIRST_DATA_ROW_INDEX][ind["start"]],\
+                                                self.time_str_format))
 
-                #Here, the actual import begins
-                for k in range(1, last_index):
+                #Here, the import begins (loop over data rows in file)
+                for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
                     start = datetime.strptime(data[k][ind["start"]],\
-                                                        self.time_str_format)
+                                              self.time_str_format)
+                    print start
                     if self.start <= start <= self.stop:
                         for key, index in ind.iteritems():
+                            print key, index, data[k][index]
                             try:
-                                #try to convert the entry into float
-                                self.results[fit_id][key].append(float(\
-                                                            data[k][index]))
-                            except ValueError:
-                                try:
+                                if key in ["start", "stop"]:
                                     self.results[fit_id][key].append(\
                                         datetime.strptime(data[k][index],\
-                                                        self.time_str_format))
-                                except:
+                                                    self.time_str_format))
+                                    print "Entry is datetime"
+                                else:
+                                    #try to convert the entry into float
                                     self.results[fit_id][key].append(\
-                                                            data[k][index])
+                                                    float(data[k][index]))
+                                    print "Entry is number"
+                            except:
+                                print "Entry is not number and not datetime"
+                                self.results[fit_id][key].append(\
+                                                        data[k][index])
+                                
                                 
         for key, dic in self.results.iteritems():
             for k, lst in dic.iteritems():
@@ -511,13 +602,17 @@ class DataImport(object):
     def _update_time_str_format(self, data):
         """Set the format strings for datetime info in the result-files"""
         func = self._type_dict["start"]
-        col = self.find_col_index(self._meta_ids["start"], data[0])
+        if self.setup.HEADER_ACCESS_OPT:
+            col = self.find_col_index(self._meta_ids["start"], data[0])
+        else:
+            col = self.setup.meta_import_info["start"]
+        print "Found column: %s " %col
         if col is -1:
             return 0
         fmts = self.time_str_formats
         for k in range(len(fmts)):
             try:
-                func(data[1][col],fmts[k])
+                func(data[self.setup.FIRST_DATA_ROW_INDEX][col],fmts[k])
                 print "Found time string format %s" %fmts[k]
                 self._time_str_index = k
                 return 1
@@ -532,14 +627,17 @@ class DataImport(object):
         :returns: - bool, Match or no match
         """
         func = self._type_dict["start"]
-        col = self.find_col_index(self._meta_ids["start"], data[0])
+        if self.setup.HEADER_ACCESS_OPT:
+            col = self.find_col_index(self._meta_ids["start"], data[0])
+        else:
+            col = self.setup.meta_import_info["start"]
         if col is -1:
             return 0
         if self.start is None or self.stop is None:
             return 1
         last_index = shape(data)[0]
         #loop over all fitted spectra in the file and find matches
-        for k in range(1, last_index):
+        for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
             t = func(data[k][col], self.time_str_format)
             if self.start < t < self.stop:
                 print "Found data file match %s" %t
@@ -580,8 +678,12 @@ class DataImport(object):
                 
         """
         self.init_filepaths()
-        all_files = [join(self.base_path, f) for f in listdir(self.base_path)\
-                                                if f.endswith(self.file_type)]
+        all_files = [join(self.base_path, f) for f in listdir(\
+                         self.base_path) if f.endswith(self.file_type)]
+        if not len(all_files) > 0:
+            raise IOError("Data import failed, no files of type %s could "
+                "be found in current base folder: %s" #
+                %(self.file_type, self.base_path))
         #first check if time conversion works
         self._update_time_str_format(self.read_text_file(all_files[0]))
         for fname in all_files:            
@@ -591,6 +693,7 @@ class DataImport(object):
                     found = self.check_time_match(data)
                     if found:
                         self.file_paths[fit_id].append(fname)
+        
         del data, all_files
      
     def read_text_file(self, p):

@@ -11,17 +11,11 @@ Requirements
 
 Installation
 ------------
+pydoas can be installed from source by downloading and extracting the latest release. After navigating to the source folder (where the setup.py file is located), call::
 
-**From source**
-
-Download, navigate to download folder, unzip and call::
-  
   python setup.py install
-  
-**Using pip**
 
-pydoas is registered on PyPi and can be installed calling::
-  
-  pip install pydoas
-  
+Get started
+-----------
 
+After installation try running the example scripts in order to test the installation. The scripts are also meant to provide an easy start into the main features of pydoas.

@@ -12,7 +12,7 @@ with open('README.rst') as file:
     
 setup(
     name        =   'pydoas',
-    version     =   '0.0.2',
+    version     =   '1.0.0',
     author      =   'Jonas Gliss',
     author_email=   'jg@nilu.no',
     license     =   'BSD3',

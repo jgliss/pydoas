@@ -2,31 +2,35 @@ Create new import specifications based on your text file format. The result file
 type, please make a copy of the following empty mask and fill the relevant
 fields.
 
-NEWTYPE
+NEWTYPE (empty mask)
 type: # the name of this import type within the code environment
+access_type: # specify data access type (choose from col_index or header_str)
+has_header_line: # boolean specifying whether result files include a header
 file_type: # file type of your result files
 delim: #file column delimiter
 time_str_formats: # if several, separate by commas (,)
-start: # header string to identify spectrum start time column
-stop: # header string to identify spectrum stop time column
-texp: # header string to identify spectrum exposure time column
-num_scans: # header string to identify column with info about added spectra
-azim: # header string to identify column with azimuth angles
-elev: # header string to identify column with elevation angles
-lat: # header string to identify column with latitudes of instrument
-lon: # header string to identify column with longitudes of instrument
-geom: # header string to identify column with solar position info
-chi2: # header string to identify column with fit chi2
-delta: # header string to identify column with fit delta
-rms: # header string to identify column with fit RMS
-fit_low: # header string to identify column with lower fit boundary
-fit_high: # header string to identify column with upper fit boundary
+start: # column index or header string to identify spectrum start time column
+stop: # column index or header string to identify spectrum stop time column
+texp: # column index or header string to identify spectrum exposure time column
+num_scans: # column index or header string to identify column with info about added spectra
+azim: # column index or header string to identify column with azimuth angles
+elev: # column index or header string to identify column with elevation angles
+lat: # column index or header string to identify column with latitudes of instrument
+lon: # column index or header string to identify column with longitudes of instrument
+geom: # column index or header string to identify column with solar position info
+chi2: # column index or header string to identify column with fit chi2
+delta: # column index or header string to identify column with fit delta
+rms: # column index or header string to identify column with fit RMS
+fit_low: # column index or header string to identify column with lower fit boundary
+fit_high: # column index or header string to identify column with upper fit boundary
 species_pre_string: #pre string in header for fit results 
-fit_err_add_col: #number speifying relative column for species fit error
+fit_err_add_col: #number specifying relative column for species fit error (use 0 if no error is supposed to be included)
 ENDTYPE
 
 NEWTYPE
 type:doasis
+access_type:header_str
+has_header_line: 1
 file_type:dat
 delim:\t
 time_str_formats:%d/%m/%Y %I:%M:%S %p,%Y-%m-%d %H:%M:%S
