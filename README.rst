@@ -14,8 +14,13 @@ Installation
 pydoas can be installed from source by downloading and extracting the latest release. After navigating to the source folder (where the setup.py file is located), call::
 
   python setup.py install
+  
+Instructions and code documentation
+-----------------------------------
+
+The code documentation of pydoas is hosted on `Read The Docs <http://pydoas.readthedocs.io/en/latest/index.html>`_
 
 Get started
 -----------
 
-After installation try running the example scripts in order to test the installation. The scripts are also meant to provide an easy start into the main features of pydoas.
+After installation try running the `example scripts <http://pydoas.readthedocs.io/en/latest/examples.html>`_ in order to test the installation. The scripts are also meant to provide an easy start into the main features of pydoas.
