@@ -18,7 +18,7 @@ pydoas can be installed from source by `downloading and extracting the latest re
 Instructions and code documentation
 -----------------------------------
 
-The code documentation of pydoas is hosted on `Read The Docs <http://pydoas.readthedocs.io/en/latest/index.html>`_
+The code documentation of pydoas is hosted `here <http://pydoas.readthedocs.io/en/latest/index.html>`_
 
 Get started
 -----------
