@@ -9,10 +9,14 @@ from setuptools import setup, find_packages
 
 with open('README.rst') as file:
     readme = file.read()
+
+with open("VERSION.rst") as f:
+    version = f.readline()
+    f.close()
     
 setup(
     name        =   'pydoas',
-    version     =   '1.0.0',
+    version     =   version,
     author      =   'Jonas Gliss',
     author_email=   'jg@nilu.no',
     url         =   'https://github.com/jgliss/pydoas.git',

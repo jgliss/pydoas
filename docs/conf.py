@@ -15,7 +15,9 @@
 import sys
 import os
 import shlex
-from pydoas import __version__ as __version__
+with open(os.path.join("..", "VERSION.rst")) as f:
+    __version__ = f.readline()
+    f.close()
 
 sys.path.insert(0, os.path.abspath('../'))
 
