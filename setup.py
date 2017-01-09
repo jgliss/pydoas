@@ -20,7 +20,9 @@ setup(
     package_dir =   {'pydoas'     :   'pydoas'},
     packages    =   find_packages(exclude=['contrib', 'docs', 'tests*']),
     include_package_data = True,            
-    package_data =   {'pydoas'          : ['data/*/*.dat', 'data/*.txt'],
+    package_data =   {'pydoas'          : ['data/*/*.dat', 
+                                           'data/*/*.csv',
+                                           'data/*.txt'],
                       'pydoas.scripts'   : ['scripts/*.py']},
 
 #    data_files = [('scripts', ['scripts/*.py'])],
