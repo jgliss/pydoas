@@ -12,7 +12,7 @@ for the two fit IDs specified.
 
 """
 import pydoas
-from os.path import join
+from os.path import join, exists
 from collections import OrderedDict as od
 
 ### Path for output storage
@@ -52,8 +52,11 @@ def load_fake_results():
     return pydoas.analysis.DatasetDoasResults(stp)
 
 if __name__ == "__main__":
+    from matplotlib.pyplot import show
     ds = load_fake_results()
     ax = ds.scatter_plot("species3", "fit1", "species3", "fit2",\
                     species_id_zaxis = "species1", fit_id_zaxis = "fit1")
     ax.set_title("Ex.2, scatter + regr, fake species3")
+    show()
+    print "Outpath %s, exists (y/n) %s" %(out_path, exists(out_path))
     ax.figure.savefig(join(out_path, "ex2_out1_scatter.png"))

@@ -498,7 +498,7 @@ class DataImport(object):
         #load all metainfo indices
         warnings = []
         if self.setup.HEADER_ACCESS_OPT:
-            ind = self.find_indices_in_header(fileheader, self._meta_ids)
+            ind = self.find_valid_indices_header(fileheader, self._meta_ids)
         else:
             ind = {}
             for key, val in self._meta_ids.iteritems():
