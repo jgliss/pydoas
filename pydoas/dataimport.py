@@ -506,7 +506,6 @@ class DataImport(object):
                     ind[key] = int(val)
                 except:
                     pass
-        print ind        
         #now find indices of all species supposed to be extracted from this fit 
         #scenario
         for species, info in self.setup.import_info.iteritems():
@@ -556,23 +555,18 @@ class DataImport(object):
                 for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
                     start = datetime.strptime(data[k][ind["start"]],\
                                               self.time_str_format)
-                    print start
                     if self.start <= start <= self.stop:
                         for key, index in ind.iteritems():
-                            print key, index, data[k][index]
                             try:
                                 if key in ["start", "stop"]:
                                     self.results[fit_id][key].append(\
                                         datetime.strptime(data[k][index],\
                                                     self.time_str_format))
-                                    print "Entry is datetime"
                                 else:
                                     #try to convert the entry into float
                                     self.results[fit_id][key].append(\
                                                     float(data[k][index]))
-                                    print "Entry is number"
                             except:
-                                print "Entry is not number and not datetime"
                                 self.results[fit_id][key].append(\
                                                         data[k][index])
                                 
@@ -606,7 +600,6 @@ class DataImport(object):
             col = self.find_col_index(self._meta_ids["start"], data[0])
         else:
             col = self.setup.meta_import_info["start"]
-        print "Found column: %s " %col
         if col is -1:
             return 0
         fmts = self.time_str_formats
