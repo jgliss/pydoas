@@ -35,7 +35,7 @@ setup(
                              "pandas",
                              "sphinxcontrib-images"],
     dependency_links    =   [],
-    description = ("A Python toolbox for import and analysis of DOAS "
+    description = ("A Python toolbox for post analysis of DOAS "
             "(Differential Optical Absorbtion Spectroscopy) results"),
     long_description = readme,
 )
