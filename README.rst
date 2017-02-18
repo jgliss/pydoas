@@ -11,7 +11,11 @@ Requirements
 
 Installation
 ------------
-pydoas can be installed from source by `downloading and extracting the latest release <https://github.com/jgliss/pydoas>`_. After navigating to the source folder (where the setup.py file is located), call::
+pydoas can be installed from PyPi using::
+
+  pip install pydoas
+  
+or from source (hosted on GitHub) by `downloading and extracting the latest release <https://github.com/jgliss/pydoas>`_. After navigating to the source folder (where the setup.py file is located), call::
 
   python setup.py install
   
