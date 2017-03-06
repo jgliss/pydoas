@@ -3,20 +3,21 @@ from datetime import datetime, timedelta
 from os.path import join, exists
 from os import listdir
 import csv
-from numpy import asarray, shape #full, polyfit, poly1d, logical_and, polyval, shape
+from warnings import warn
+from numpy import asarray, shape 
 
 from .inout import get_import_info
-#from .setup import ResultImportSetup
+from .helpers import to_datetime
 
 class ResultImportSetup(object):
     """Setup class for spectral result imports from text like files """
-    def __init__(self, base_path = None, start = datetime(1900, 1, 1),\
-                 stop = datetime(3000, 1, 1), meta_import_info = "doasis",\
-                 result_import_dict = {}, default_dict = {},\
-                 doas_fit_err_factors = {}, dev_id = "",\
+    def __init__(self, base_dir=None, start=datetime(1900, 1, 1),
+                 stop=datetime(3000, 1, 1), meta_import_info="doasis",
+                 result_import_dict={}, default_dict={},
+                 doas_fit_err_factors={}, dev_id="",
                  lt_to_utc_offset = timedelta(0.0)):
         """
-        :param str base_path: folder containing resultfiles
+        :param str base_dir: folder containing resultfiles
         :param datetime start: time stamp of first spectrum
         :param datetime stop: time stamp of last spectrum
         
@@ -89,10 +90,14 @@ class ResultImportSetup(object):
         
         """
         self.id = "ResultImportSetup"
-        self.base_path = base_path
+        self.base_dir = base_dir
+        self._start = None
+        self._stop = None
+        
         self.start = start
         self.stop = stop
-        self.lt_to_utc_offset = lt_to_utc_offset
+        
+        self.lt_to_utc_offset = lt_to_utc_offset #currently unused ...
         
         self.dev_id = dev_id
         
@@ -122,18 +127,36 @@ class ResultImportSetup(object):
                     self.meta_import_info["has_header_line"]:
             raise Exception("Invalid combination of result file settings: "
                 "has_header_line == False and access_type == header_str")
+    
+    @property
+    def start(self):
+        """Getter / setter method for start time"""
+        return self._start
         
-    
-    def set_basepath(self, path):
-        """Set the current basepath of the result files"""
+    @start.setter
+    def start(self, val):
         try:
-            if exists(path):
-                self.base_path = path
-                return True
-        except Exception as e:
-            print repr(e)
-            return False
+            self._start = to_datetime(val)
+        except:
+            warn("Input %s could not be assigned to start time in setup" %val)
     
+    @property
+    def stop(self):
+        """Getter / setter method for start time"""
+        return self._stop
+        
+    @stop.setter
+    def stop(self, val):
+        try:
+            self._stop = to_datetime(val)
+        except:
+            warn("Input %s could not be assigned to stop time in setup" %val)
+    
+    @property
+    def base_path(self):
+        """Old name of base_dir for versions <= 1.0.1"""
+        return self.base_dir
+        
     def set_start_time(self, dt):
         """Set the current start time
         
@@ -170,8 +193,8 @@ class ResultImportSetup(object):
     def complete(self):
         """Checks if basic information is available"""
         miss = []
-        if not isinstance(self.base_path, str) or not exists(self.base_path):
-            miss.append("base_path")
+        if not isinstance(self.base_dir, str) or not exists(self.base_dir):
+            miss.append("base_dir")
         if not all([isinstance(x, datetime) for x in [self.start, self.stop]]):
             miss.extend(["start", "stop"])
         if not bool(self.import_info):
@@ -315,7 +338,7 @@ class ResultImportSetup(object):
             "Base path: %s\n" 
             "Start: %s\n"
             "Stop: %s\n"
-            %(self.id, self.base_path, self.start, self.stop))
+            %(self.id, self.base_dir, self.start, self.stop))
         s = s + "n\Absorption cross sections\n"
         for key, val in self.import_info.iteritems():
             s = s + "%s: %s\n" %(key, val[0])
@@ -425,9 +448,9 @@ class DataImport(object):
         return False
         
     @property
-    def base_path(self):
+    def base_dir(self):
         """Returns current basepath of resultfiles"""
-        return self.setup.base_path
+        return self.setup.base_dir
         
     @property
     def start(self):
@@ -639,11 +662,11 @@ class DataImport(object):
     
     @property
     def first_file(self):
-        """Get filepath of first file match in ``self.base_path``
+        """Get filepath of first file match in ``self.base_dir``
         
         This can for instance be read with :func:`read_text_file`
         """
-        all = [join(self.base_path, f) for f in listdir(self.base_path) if\
+        all = [join(self.base_dir, f) for f in listdir(self.base_dir) if\
                                                     f.endswith(self.file_type)]
         return all[0]
     
@@ -655,7 +678,7 @@ class DataImport(object):
     def get_all_files(self):
         """Get all valid files based on current settings
         
-        Checks ``self.base_path`` for files matching the specified file type, 
+        Checks ``self.base_dir`` for files matching the specified file type, 
         and which include one of the required fit IDs in their name. Files
         matching these 2 criteria are opened and the spectrum times are read 
         and checked. If they match the time interval specified by
@@ -671,12 +694,12 @@ class DataImport(object):
                 
         """
         self.init_filepaths()
-        all_files = [join(self.base_path, f) for f in listdir(\
-                         self.base_path) if f.endswith(self.file_type)]
+        all_files = [join(self.base_dir, f) for f in listdir(\
+                         self.base_dir) if f.endswith(self.file_type)]
         if not len(all_files) > 0:
             raise IOError("Data import failed, no files of type %s could "
                 "be found in current base folder: %s" #
-                %(self.file_type, self.base_path))
+                %(self.file_type, self.base_dir))
         #first check if time conversion works
         self._update_time_str_format(self.read_text_file(all_files[0]))
         for fname in all_files:            

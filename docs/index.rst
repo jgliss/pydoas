@@ -14,7 +14,9 @@ Welcome to pydoas's documentation!
    readme_link
    code
    examples
+   supplemental
    remarks_doas_analysis
+   
    
 Indices and tables
 ==================

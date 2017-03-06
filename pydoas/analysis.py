@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from numpy import asarray, full, polyfit, poly1d, logical_and, polyval
-from pandas import Series
+from pandas import Series, DataFrame
 from traceback import format_exc
 from matplotlib.pyplot import subplots
+from matplotlib.dates import DateFormatter
 from copy import deepcopy
 #from .setup import ResultImportSetup
+from .helpers import to_datetime
 from .dataimport import DataImport, ResultImportSetup
             
 class DatasetDoasResults(object):
     """A Dataset for DOAS fit results import and processing"""
-    def __init__(self, setup = None, init = 1, **kwargs):
+    def __init__(self, setup=None, init=1, **kwargs):
         """Initialisation of object
         
         :param ResultImportSetup setup: setup specifying  all necessary import 
@@ -30,7 +32,7 @@ class DatasetDoasResults(object):
             self.load_raw_results()
         #self.change_time_ival(start,stop)
             
-    def load_input(self, setup = None, **kwargs):
+    def load_input(self, setup=None, **kwargs):
         """Process input information
         
         Writes ``self.setup`` based on setup
@@ -95,7 +97,7 @@ class DatasetDoasResults(object):
                 return True
         return False
     
-    def has_data(self, fit_id, species_id, start = None, stop = None):
+    def has_data(self, fit_id, species_id, start=None, stop=None):
         """Checks if specific data is available"""
         if not (fit_id in self.raw_results and species_id in\
                                                 self.raw_results[fit_id]):
@@ -107,7 +109,7 @@ class DatasetDoasResults(object):
         return True
     
     def get_spec_times(self, fit):
-        """Returns start time and stop time arrays for spectra to a fiven fit"""
+        """Returns start time and stop time arrays for spectra to a given fit"""
 
         start = asarray(self.raw_results[fit]["start"])
         stop = asarray(self.raw_results[fit]["stop"])
@@ -128,18 +130,24 @@ class DatasetDoasResults(object):
         self.setup.stop = max(stop_acq)
         return self.start, self.stop
     
-    def get_start_stop_mask(self, fit, start = None, stop = None):
+    def get_start_stop_mask(self, fit, start=None, stop=None):
         """Creates boolean mask for data access only in a certain time interval
         """
         if start is None:
             start = self.start
+        elif isinstance(start, date): 
+            #assume that all spectra from that day are supposed to be imported
+            print ("Start time is date, loading results from all spectra of "
+                    "that day")
+            start = to_datetime(start)
+            stop = start + timedelta(days=1)
         if stop is None:
             stop = self.stop
         i, f = self.get_spec_times(fit)
         mask = logical_and(i >= start, i <= stop)
         return mask, i[mask], f[mask]
         
-    def get_meta_info(self, fit, meta_id, start = None, stop = None):
+    def get_meta_info(self, fit, meta_id, start=None, stop=None):
         """Get meta info array
         
         :param str meta_id: string ID of meta information
@@ -165,7 +173,7 @@ class DatasetDoasResults(object):
         """
         return self.raw_results[fit_id][species_id]
         
-    def get_results(self, species_id, fit_id = None, start = None, stop = None):
+    def get_results(self, species_id, fit_id=None, start=None, stop=None):
         """Get spectral results object
         
         :param str species_id: string ID of species
@@ -222,17 +230,17 @@ class DatasetDoasResults(object):
     """
     PLOTTING ETC...
     """
-    def plot(self,species_id, fit_id = None, start = None, stop = None,\
-                                                                    **kwargs):
+    def plot(self,species_id, fit_id=None, start=None, stop=None, **kwargs):
         """Plot DOAS results"""
         res = self.get_results(species_id, fit_id, start, stop)
         if res is not False:
             return res.plot(**kwargs)
         return 0
             
-    def scatter_plot(self, species_id_xaxis, fit_id_xaxis, species_id_yaxis,\
-            fit_id_yaxis, lin_fit_opt=1, species_id_zaxis = None, fit_id_zaxis =\
-                        None, start = None, stop = None, ax = None, **kwargs):
+    def scatter_plot(self, species_id_xaxis, fit_id_xaxis, species_id_yaxis,
+                     fit_id_yaxis, lin_fit_opt=1, species_id_zaxis=None, 
+                     fit_id_zaxis=None, start=None, stop=None, ax=None, 
+                     **kwargs):
         """Make a scatter plot of two species
         
         :param str species_id_xaxis: string ID of x axis species (e.g. "so2")
@@ -392,7 +400,42 @@ class DoasResults(Series):
         except Exception as e:
             print repr(e)
             return False
+       
+    def merge_other(self, other, itp_method="linear", dropna=True):
+        """Merge with other time series sampled on different grid
+        
+        Note
+        ----
+        
+        This object will not be changed, instead, two new Series objects will
+        be created and returned
+        
+        Parameters
+        ----------
+        other : Series
+            Other time series 
+        itp_method : str
+            String specifying interpolation method (e.g. linear, quadratic)
+        dropna : bool
+            Drop indices containing NA after merging and interpolation 
             
+        Returns
+        -------
+        tuple
+            2-element tuple containing
+            
+            - this Series (merged)
+            - other Series (merged)
+        
+        """
+        if not isinstance(other, Series):
+            raise ValueError("Need pandas Series instance (or objects "
+                            "inheriting from it)")
+        df = DataFrame(dict(s1=self,s2=other)).interpolate(itp_method)
+        if dropna:
+            df = df.dropna()
+        return df.s1, df.s2
+        
     def get_data_above_detlim(self):
         """Get fit results exceeding the detection limit 
         
@@ -419,7 +462,7 @@ class DoasResults(Series):
 #         shifted = super(DoasResults, self).shift(*args, **kwargs)
 #         return 
 #==============================================================================
-    def plot(self, *args, **kwargs):
+    def plot(self, date_formatter=DateFormatter("%H:%M:%S"), **kwargs):
         """Plot series
         
         Uses plotting utility of :class:`Series` object (pandas)        
@@ -429,8 +472,10 @@ class DoasResults(Series):
         try:
             if not "style" in kwargs:
                 kwargs["style"]="--x"
+            self.index = self.index.to_pydatetime()
             
             ax = super(DoasResults, self).plot(**kwargs)
+            ax.xaxis.set_major_formatter(date_formatter)
             ax.set_ylabel(self.species)
             return ax
         except:
