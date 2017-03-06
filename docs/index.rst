@@ -6,6 +6,8 @@
 Welcome to pydoas's documentation!
 ==================================
 
+pydoas provides high level functionality for import of text file based results from DOAS analyses (i.e. it cannot  perform the actual DOAS retrieval). It supports default import routines for the result file format of the software DOASIS.
+
 **Contents:**
 
 .. toctree::
