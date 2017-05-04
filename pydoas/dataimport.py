@@ -628,6 +628,8 @@ class DataImport(object):
         fmts = self.time_str_formats
         for k in range(len(fmts)):
             try:
+                print data[self.setup.FIRST_DATA_ROW_INDEX][col]
+                print fmts[k]
                 func(data[self.setup.FIRST_DATA_ROW_INDEX][col],fmts[k])
                 print "Found time string format %s" %fmts[k]
                 self._time_str_index = k

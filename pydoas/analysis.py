@@ -2,7 +2,6 @@
 from datetime import datetime, timedelta, date
 from numpy import asarray, full, polyfit, poly1d, logical_and, polyval
 from pandas import Series, DataFrame
-from traceback import format_exc
 from matplotlib.pyplot import subplots
 from matplotlib.dates import DateFormatter
 from copy import deepcopy
@@ -36,6 +35,7 @@ class DatasetDoasResults(object):
         """Process input information
         
         Writes ``self.setup`` based on setup
+        
         :param setup: is set if valid (i.e. if input is 
             :class:`ResultImportSetup`)        
         :param **kwargs: - keyword arguments for new :class:`ResultImportSetup`
@@ -462,24 +462,29 @@ class DoasResults(Series):
 #         shifted = super(DoasResults, self).shift(*args, **kwargs)
 #         return 
 #==============================================================================
-    def plot(self, date_formatter=DateFormatter("%H:%M:%S"), **kwargs):
-        """Plot series
+    def plot(self, date_fmt=None, **kwargs):
+        """Plot time series
         
         Uses plotting utility of :class:`Series` object (pandas)        
         
         :param **kwargs: - keyword arguments for pandas plot method
         """
+        if not "style" in kwargs:
+            kwargs["style"]="--x"
+        
         try:
-            if not "style" in kwargs:
-                kwargs["style"]="--x"
             self.index = self.index.to_pydatetime()
-            
-            ax = super(DoasResults, self).plot(**kwargs)
-            ax.xaxis.set_major_formatter(date_formatter)
-            ax.set_ylabel(self.species)
-            return ax
         except:
-            print format_exc()
+            pass
+        ax = super(DoasResults, self).plot(**kwargs)
+        try:
+            if date_fmt is not None:
+                ax.xaxis.set_major_formatter(DateFormatter(date_fmt))
+        except:
+            pass
+        #ax.xaxis.set_major_formatter(date_formatter)
+        ax.set_ylabel(self.species)
+        return ax
     
     def shift(self, timedelta = timedelta(0.)):
         """Shift time stamps of object
