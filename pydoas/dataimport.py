@@ -693,8 +693,11 @@ class DataImport(object):
             This function does not load data but only assigns the individual
             result files to the fit IDs, the data will then be loaded calling
             :func:`load_results`
-                
+        
         """
+        if not exists(self.base_dir):
+            raise IOError("DOAS data import failed: result base directory "
+                "%s does not exist" %self.base_dir)
         self.init_filepaths()
         all_files = [join(self.base_dir, f) for f in listdir(\
                          self.base_dir) if f.endswith(self.file_type)]
