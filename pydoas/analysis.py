@@ -494,6 +494,7 @@ class DoasResults(Series):
         :returns: shifted :class:`DoasResults` object 
         """
         new = deepcopy(self)
+        new.fit_errs = self.fit_errs
         new.index = self.index + timedelta
         if self.has_start_stop_acqtamps:
             new.start_acq = self.start_acq + timedelta
