@@ -396,6 +396,9 @@ class DataImport(object):
     
     def get_data(self):
         """Load all data"""
+        if not exists(self.base_dir):
+            raise IOError("DOAS data import failed: result base directory "
+                "%s does not exist" %self.base_dir)
         try:
             self.load_result_type_info()
             self.get_all_files()
@@ -657,6 +660,7 @@ class DataImport(object):
         #loop over all fitted spectra in the file and find matches
         for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
             t = func(data[k][col], self.time_str_format)
+            print t
             if self.start < t < self.stop:
                 print "Found data file match %s" %t
                 return 1
@@ -707,9 +711,10 @@ class DataImport(object):
                 %(self.file_type, self.base_dir))
         #first check if time conversion works
         self._update_time_str_format(self.read_text_file(all_files[0]))
-        for fname in all_files:            
+        for fname in all_files: 
             for fit_id in self.setup.fit_ids:
                 if fname.find(fit_id) >- 1:
+                    print "YEEAH"
                     data = self.read_text_file(fname)
                     found = self.check_time_match(data)
                     if found:

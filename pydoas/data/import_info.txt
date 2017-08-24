@@ -33,7 +33,7 @@ access_type:header_str
 has_header_line: 1
 file_type:dat
 delim:\t
-time_str_formats:%d/%m/%Y %I:%M:%S %p,%Y-%m-%d %H:%M:%S,%m/%d/%Y %H:%M:%S 
+time_str_formats:%d/%m/%Y %I:%M:%S %p,%Y-%m-%d %H:%M:%S,%m/%d/%Y %H:%M:%S, %m/%d/%Y %I:%M:%S %p
 start:StartDateAndTime
 stop:StopDateAndTime
 texp:ExposureTime
