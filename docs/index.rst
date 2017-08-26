@@ -18,8 +18,8 @@ pydoas provides high level functionality for import of text file based results f
    :maxdepth: 3
    
    readme_link
-   api
    examples
+   api
    supplemental
    remarks_doas_analysis
    
