@@ -121,6 +121,7 @@ class DatasetDoasResults(object):
         start_acq, stop_acq = [], []
         
         for fit_id in self.raw_results:
+            print fit_id
             ts, _ = self.get_spec_times(fit_id)
             if len(ts) > 0:
                 start_acq.append(ts.min())
