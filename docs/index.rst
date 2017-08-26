@@ -3,10 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pydoas's documentation!
-==================================
+Welcome to pydoas
+=================
 
 pydoas provides high level functionality for import of text file based results from DOAS analyses (i.e. it cannot  perform the actual DOAS retrieval). It supports default import routines for the result file format of the software DOASIS.
+
+.. note::
+
+  pydoas is written for Python 2.7
 
 **Contents:**
 
@@ -14,7 +18,7 @@ pydoas provides high level functionality for import of text file based results f
    :maxdepth: 3
    
    readme_link
-   code
+   api
    examples
    supplemental
    remarks_doas_analysis

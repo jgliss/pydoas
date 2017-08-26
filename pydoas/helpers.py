@@ -102,4 +102,8 @@ def rotate_xtick_labels(ax, deg=30, ha="right"):
     ax.set_xticklabels(lbls, rotation = 30, ha = "right")
     draw()
     return ax
+
+def find_fitted_species_doasis_header(file_name):
+    """Search all fitted species in header of DOASIS resultfile"""
+    raise NotImplementedError
     

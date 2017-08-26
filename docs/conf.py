@@ -15,6 +15,10 @@
 import sys
 import os
 import shlex
+import matplotlib
+
+matplotlib.use('agg')
+
 with open(os.path.join("..", "VERSION.rst")) as f:
     __version__ = f.readline()
     f.close()

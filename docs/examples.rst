@@ -1,11 +1,12 @@
+***************
 Example scripts
-###############
+***************
 
 On this page, some exemplary example scripts are presented, the scripts 
 can be downloaded from the webpage.
 
 Example 1 - Result import and plotting
---------------------------------------
+======================================
 
 **code**
 
@@ -24,7 +25,7 @@ Example 1 - Result import and plotting
   Ex2, Fig. 2: Time series of BrO/SO2 ratio (left y-axis) and corresponding SO2 CDs (green shaded, right y-axis) for same time series as shown in Fig. 1 
   
 Example 2 - Define new import type and load fake data
------------------------------------------------------
+=====================================================
 
 **code**
 

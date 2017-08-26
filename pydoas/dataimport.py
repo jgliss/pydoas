@@ -15,7 +15,7 @@ class ResultImportSetup(object):
                  stop=datetime(3000, 1, 1), meta_import_info="doasis",
                  result_import_dict={}, default_dict={},
                  doas_fit_err_factors={}, dev_id="",
-                 lt_to_utc_offset = timedelta(0.0)):
+                 lt_to_utc_offset=timedelta(0.0)):
         """
         :param str base_dir: folder containing resultfiles
         :param datetime start: time stamp of first spectrum
