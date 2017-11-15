@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+#
+# Pydoas is a Python library for the post-analysis of DOAS result data
+# Copyright (C) 2017 Jonas Gliß (jonasgliss@gmail.com)
+#
+# This program is free software: you can redistribute it and/or
+# modify it under the terms of the BSD 3-Clause License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# See BSD 3-Clause License for more details 
+# (https://opensource.org/licenses/BSD-3-Clause)
 from datetime import datetime, timedelta
 from os.path import join, exists
 from os import listdir
@@ -89,7 +101,6 @@ class ResultImportSetup(object):
                         
         
         """
-        self.id = "ResultImportSetup"
         self.base_dir = base_dir
         self._start = None
         self._stop = None
@@ -127,10 +138,11 @@ class ResultImportSetup(object):
                     self.meta_import_info["has_header_line"]:
             raise Exception("Invalid combination of result file settings: "
                 "has_header_line == False and access_type == header_str")
-    
+        if not result_import_dict:
+            self.auto_detect_
     @property
     def start(self):
-        """Getter / setter method for start time"""
+        """Start time-stamp of data"""
         return self._start
         
     @start.setter
@@ -142,7 +154,7 @@ class ResultImportSetup(object):
     
     @property
     def stop(self):
-        """Getter / setter method for start time"""
+        """Stop time-stamp of data"""
         return self._stop
         
     @stop.setter
@@ -261,7 +273,7 @@ class ResultImportSetup(object):
         for key, val in self.import_info.iteritems():
             if val[0] in xs:
                 print ("Error: %s was already found with a different key. "
-                            "Current key: %s. Please check fit import settings" 
+                       "Current key: %s. Please check fit import settings" 
                                                             %(val[0], key))
             else:
                 xs.append(val[0])
@@ -334,11 +346,10 @@ class ResultImportSetup(object):
     def __str__(self):
         """String representation of this class"""
         s=("\nSetup\n---------\n\n"
-            "ID: %s\n"
             "Base path: %s\n" 
             "Start: %s\n"
             "Stop: %s\n"
-            %(self.id, self.base_dir, self.start, self.stop))
+            %(self.base_dir, self.start, self.stop))
         s = s + "n\Absorption cross sections\n"
         for key, val in self.import_info.iteritems():
             s = s + "%s: %s\n" %(key, val[0])
@@ -408,7 +419,6 @@ class DataImport(object):
             print ("Data import failed: %s" %repr(e))
             return False
 
-        
     def load_result_type_info(self):
         """Load import information for result type specified in setup
         
@@ -714,7 +724,6 @@ class DataImport(object):
         for fname in all_files: 
             for fit_id in self.setup.fit_ids:
                 if fname.find(fit_id) >- 1:
-                    print "YEEAH"
                     data = self.read_text_file(fname)
                     found = self.check_time_match(data)
                     if found:
@@ -729,7 +738,7 @@ class DataImport(object):
         :returns list: data 
         """
         with open(p) as f:
-            reader = csv.reader(f, delimiter = self.delim)
+            reader = csv.reader(f, delimiter=self.delim)
             data = list(reader)
         return data
     
