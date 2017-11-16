@@ -12,7 +12,7 @@ Requirements
 Copyright
 =========
 
-Copyright (C) 2017 Jonas Gliﬂ (jonasgliss@gmail.com)
+Copyright (C) 2017 Jonas Gliss (jonasgliss@gmail.com)
 
 This program is free software: you can redistribute it and/or modify it under the terms of the BSD 3-Clause License
 
