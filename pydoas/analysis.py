@@ -377,7 +377,7 @@ class DoasResults(Series):
         self.fit_errs_corr_fac = fit_errs_corr_fac
         self.start_acq = start_acq
         self.stop_acq = stop_acq
-
+         
     @property
     def start(self):
         """Start time of data"""
@@ -505,12 +505,16 @@ class DoasResults(Series):
         :param timedelta timedelta: temporal shift 
         :returns: shifted :class:`DoasResults` object 
         """
-        new = deepcopy(self)
-        new.fit_errs = self.fit_errs
-        new.index = self.index + timedelta
+        new = DoasResults(self.values, 
+                          self.index + timedelta, 
+                          self.start_acq, 
+                          self.stop_acq, 
+                          self.fit_errs, self.name, self.fit_id, 
+                          self.fit_errs_corr_fac)
         if self.has_start_stop_acqtamps:
-            new.start_acq = self.start_acq + timedelta
-            new.stop_acq = self.stop_acq + timedelta
+            new.start_acq += timedelta
+            new.stop_acq += timedelta
+        print("BLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         return new
         
         
