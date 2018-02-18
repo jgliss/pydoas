@@ -104,7 +104,7 @@ def shifted_color_map(vmin, vmax, cmap = None):
 def _print_list(lst):
     """Print a list rowwise"""
     for item in lst:
-        print item
+        print(item)
 
 def rotate_xtick_labels(ax, deg=30, ha="right"):
     """Rotate xtick labels in matplotlib axes object"""

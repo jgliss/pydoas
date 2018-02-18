@@ -2,6 +2,11 @@ pydoas is a Python library for reading, postprocessing and plotting of DOAS (Dif
 It supports default import of the result file format of
 `DOASIS <https://doasis.iup.uni-heidelberg.de/bugtracker/projects/doasis/>`_. Further import formats for fast data access can easily be defined by the user.
 
+News
+====
+
+18 Feb 2018: Updated for Python 3 support
+
 Requirements
 ============
 

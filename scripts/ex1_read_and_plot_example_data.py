@@ -74,7 +74,7 @@ def plot_some_examples(ds):
     r2 = ds.get_results("so2", "f02")
     
     #plot all SO2 results in top left axes object
-    r0.plot(style="-b", ax=ax, label="so2 (default, f03)", date_fmt="%H:%M")
+    r0.plot(style="-b", ax=ax, label="so2 (default, f03)")
     r1.plot(style="--c", ax=ax, label="so2 (f01)")
     r2.plot(style="--r", ax=ax, label="so2 (f02)").set_ylabel("SO2 [cm-2]")
     ax.legend(loc='best', fancybox=True, framealpha=0.5, fontsize=9)
@@ -96,7 +96,7 @@ def plot_some_examples(ds):
     broso2 = bro/so2
     
     fig2, axis = plt.subplots(1,1)
-    broso2.plot(ax = axis, style=" o", date_fmt="%H:%M")
+    broso2.plot(ax = axis, style=" o")
     axis.set_ylabel("BrO/SO2")
     so2.plot(ax=axis, kind="area", secondary_y=True, alpha=0.3).\
                                                 set_ylabel("SO2 CD [cm-2]")

@@ -20,7 +20,7 @@ from os.path import abspath, dirname
 _LIBDIR = abspath(dirname(__file__))
 
 from .inout import *  #from .io import get_data_dirs, get_data_files
-import helpers
-from dataimport import ResultImportSetup
-from analysis import DatasetDoasResults, DoasResults
+from . import helpers
+from .dataimport import ResultImportSetup
+from .analysis import DatasetDoasResults, DoasResults
 

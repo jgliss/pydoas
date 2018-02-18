@@ -16,7 +16,7 @@ from numpy import asarray, full, polyfit, poly1d, logical_and, polyval
 from pandas import Series, DataFrame
 from matplotlib.pyplot import subplots
 from matplotlib.dates import DateFormatter
-from copy import deepcopy
+
 #from .setup import ResultImportSetup
 from .helpers import to_datetime
 from .dataimport import DataImport, ResultImportSetup
@@ -133,7 +133,7 @@ class DatasetDoasResults(object):
         start_acq, stop_acq = [], []
         
         for fit_id in self.raw_results:
-            print fit_id
+            print(fit_id)
             ts, _ = self.get_spec_times(fit_id)
             if len(ts) > 0:
                 start_acq.append(ts.min())
@@ -171,8 +171,8 @@ class DatasetDoasResults(object):
             Bool mask must have same length as the meta data array
             
         """
-        if not self.raw_results[fit].has_key(meta_id):
-            print ("Could not return meta info, unknown meta ID %s" %meta_id)
+        if meta_id not in self.raw_results[fit]:
+            print(("Could not return meta info, unknown meta ID %s" %meta_id))
             return 0
         m, start, stop = self.get_start_stop_mask(fit, start, stop)
         return Series(self.raw_results[fit][meta_id][m], start)
@@ -200,7 +200,7 @@ class DatasetDoasResults(object):
         if fit_id is None:
             fit_id = self.setup.default_fit_ids[species_id]
         if not fit_id in self.setup.get_fit_ids():
-            print "Failed to load DOAS results, invalid fit ID %s" %fit_id
+            print(("Failed to load DOAS results, invalid fit ID %s" %fit_id))
             return False
         m, start, stop = self.get_start_stop_mask(fit_id, start, stop)
         if not sum(m):
@@ -318,7 +318,7 @@ class DatasetDoasResults(object):
 
     def __getitem__(self, key):
         """Get attribute using bracketed syntax"""
-        for k,v in self.__dict__.iteritems():
+        for k,v in list(self.__dict__.items()):
             if k == key:
                 return v
             try:
@@ -326,15 +326,15 @@ class DatasetDoasResults(object):
             except:
                 pass
 
-        print "Item %s could not be found..." %key
+        print(("Item %s could not be found..." %key))
     
     def __setitem__(self, key, val):
         """Change attribute value using bracket syntax"""
-        for k,v in self.__dict__.iteritems():
+        for k,v in list(self.__dict__.items()):
             if k == key:
                 self.__dict__[key] = val
                 return               
-        print "Item %s could not be updated..." %key
+        print(("Item %s could not be updated..." %key))
     
     def __str__(self):
         """String representation"""
@@ -411,7 +411,7 @@ class DoasResults(Series):
                 raise Exception("Lengths of arrays do not match...")
             return True
         except Exception as e:
-            print repr(e)
+            print((repr(e)))
             return False
        
     def merge_other(self, other, itp_method="linear", dropna=True):

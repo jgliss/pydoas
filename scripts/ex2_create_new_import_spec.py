@@ -58,5 +58,5 @@ if __name__ == "__main__":
                     species_id_zaxis = "species1", fit_id_zaxis = "fit1")
     ax.set_title("Ex.2, scatter + regr, fake species3")
     show()
-    print "Outpath %s, exists (y/n) %s" %(out_path, exists(out_path))
+    print("Outpath %s, exists (y/n) %s" %(out_path, exists(out_path)))
     ax.figure.savefig(join(out_path, "ex2_out1_scatter.png"))

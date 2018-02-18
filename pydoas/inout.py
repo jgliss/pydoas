@@ -63,7 +63,7 @@ def import_type_exists(type_id):
         return True
     return False
     
-def get_import_info(resulttype = "doasis"):
+def get_import_info(resulttype="doasis"):
     """Try to load DOAS result import specification for default type 
     
     Import specifications for a specified data type (see package data
@@ -76,11 +76,15 @@ def get_import_info(resulttype = "doasis"):
     """
 
     from pydoas import _LIBDIR
+    from codecs import decode
     dat = od()
-    with open(join(_LIBDIR, join("data", "import_info.txt"))) as f:
+    with open(join(_LIBDIR, join("data", "import_info.txt")), "r", 
+              encoding="utf-8") as f:
         found = 0
         for line in f: 
             if "ENDTYPE" in line and found:
+                print("YEEEAH")
+                print(dat)
                 return dat
             spl = line.split(":", 1)
             if spl[0] == "type" and spl[1].split("#")[0].strip() ==\
@@ -92,8 +96,11 @@ def get_import_info(resulttype = "doasis"):
                     d = [x.strip() for x in spl[1].split("#")[0].split(',')]
                     if k == "time_str_formats":
                         dat[k] = d
+
                     elif k == "delim":
-                        dat[k] = str(d[0].decode("unicode_escape"))
+                        print(decode(d[0],"unicode-escape"))
+                        #dat[k] = str(d[0].decode("unicode_escape"))
+                        dat[k] = decode(d[0], "unicode-escape")
                     else:
                         try:
                             val = int(d[0])
@@ -128,14 +135,14 @@ def write_import_info_to_default_file(import_dict):
                 %import_dict["type"])
     except KeyError:
         raise KeyError("Please specify type in dictionary")
-    keys = get_import_info().keys()
+    keys = list(get_import_info().keys())
     p = import_info_file()
-    print "Writing to %s" %p
+    print(("Writing to %s" %p))
     with open(p, "a") as myfile:
         myfile.write("\n\nNEWTYPE\n")
-        for k, v in import_dict.iteritems():
+        for k, v in list(import_dict.items()):
             if k in keys:
-                print "ADDING %s: %s" %(k, v)
+                print(("ADDING %s: %s" %(k, v)))
                 if isinstance(v, list):
                     s = str(v[0])
                     for i in range(1, len(v)):
@@ -144,7 +151,7 @@ def write_import_info_to_default_file(import_dict):
                 else:
                     myfile.write("%s:%s\n" %(k, v))
             else:
-                print "INVALID KEY (not added) %s: %s" %(k,v)
+                print(("INVALID KEY (not added) %s: %s" %(k,v)))
         myfile.write("ENDTYPE")
         myfile.close()       
     
