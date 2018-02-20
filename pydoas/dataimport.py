@@ -205,14 +205,25 @@ class ResultImportSetup(object):
     
     def complete(self):
         """Checks if basic information is available"""
-        miss = []
-        if not isinstance(self.base_dir, str) or not exists(self.base_dir):
-            miss.append("base_dir")
-        if not all([isinstance(x, datetime) for x in [self.start, self.stop]]):
-            miss.extend(["start", "stop"])
-        if not bool(self.import_info):
-            miss.append("import_info")
-        if len(miss) > 0:
+        exceptions = []
+        try:
+            if not exists(self.base_dir):
+                raise AttributeError("Base directory does not exist")
+        except Exception as e:
+            exceptions.append(repr(e))
+        try:
+            if not all([isinstance(x, datetime) for x in [self.start, self.stop]]):
+                raise AttributeError("Invalid start / stop timestamps")
+        except Exception as e:
+            exceptions.append(repr(e))
+        try:
+            if not bool(self.import_info):
+                raise AttributeError("No species import information specified")
+        except Exception as e:
+            exceptions.append(repr(e))
+        if len(exceptions) > 0:
+            for exc in exceptions:
+                warn(exc)
             return False
         return True
         
@@ -745,10 +756,7 @@ class DataImport(object):
         :returns list: data 
         """
         with open(p) as f:
-            print(self.delim)
-            print("\t")
-            print(123)
-            reader = csv.reader(f, delimiter=self.delim)
+            reader = csv.reader(f, delimiter=str(self.delim))
             data = list(reader)
         return data
     

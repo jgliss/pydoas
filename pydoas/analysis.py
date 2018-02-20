@@ -101,12 +101,13 @@ class DatasetDoasResults(object):
         
     def load_raw_results(self):
         """Try to load all results as specified in ``self.setup``"""
-        if self.setup.complete():
-            access = DataImport(self.setup)
-            if access.data_loaded:
-                self.raw_results = access.results
-                self.set_start_stop_time()
-                return True
+        if not self.setup.complete():
+            raise AttributeError("Import setup is not complete")
+        access = DataImport(self.setup)
+        if access.data_loaded:
+            self.raw_results = access.results
+            self.set_start_stop_time()
+            return True
         return False
     
     def has_data(self, fit_id, species_id, start=None, stop=None):

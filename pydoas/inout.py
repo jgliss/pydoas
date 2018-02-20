@@ -14,9 +14,11 @@
 """
 This module contains I/O routines for DOAS result files
 """
+from __future__ import unicode_literals
 from os.path import join
 from os import listdir
 from collections import OrderedDict as od
+
 
 def get_data_dirs():
     """Get directories containing example package data
@@ -78,12 +80,10 @@ def get_import_info(resulttype="doasis"):
     from pydoas import _LIBDIR
     from codecs import decode
     dat = od()
-    with open(join(_LIBDIR, join("data", "import_info.txt")), "r", 
-              encoding="utf-8") as f:
+    with open(join(_LIBDIR, join("data", "import_info.txt"))) as f:
         found = 0
         for line in f: 
             if "ENDTYPE" in line and found:
-                print("YEEEAH")
                 print(dat)
                 return dat
             spl = line.split(":", 1)
@@ -105,7 +105,7 @@ def get_import_info(resulttype="doasis"):
                         try:
                             val = int(d[0])
                         except:
-                            val = d[0]
+                            val = str(d[0])
                         dat[k] = val
                 
     raise IOError("Info for type %s could not be found" %resulttype)

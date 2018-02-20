@@ -11,14 +11,10 @@ import pydoas
 import matplotlib.pyplot as plt
 from os.path import join
 
-### Options
-save_figs = True
+from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
 
-### Path for output storage
-out_path = join(".", "scripts_out")
-
-def import_example_results():
-        
+if __name__=="__main__":
+    plt.close("all")
     ### Get example data base path and all files in there
     files, path = pydoas.get_data_files("doasis")
     
@@ -59,57 +55,79 @@ def import_example_results():
     #: ... and load results
     ds.load_raw_results()
     
-    return ds
-
-def plot_some_examples(ds):
-    """Plots some example data from a result dataset"""
-    
-    plt.close("all")
+    ### plot_some_examples
     fig1, axes = plt.subplots(2, 2, figsize = (16, 8), sharex = True)
     ax = axes[0,0]
     
     #load all SO2 results
-    r0 = ds.get_results("so2")
-    r1 = ds.get_results("so2", "f01")
-    r2 = ds.get_results("so2", "f02")
+    so2_default = ds.get_results("so2")
+    so2_fit01 = ds.get_results("so2", "f01")
+    so2_fit02 = ds.get_results("so2", "f02")
     
     #plot all SO2 results in top left axes object
-    r0.plot(style="-b", ax=ax, label="so2 (default, f03)")
-    r1.plot(style="--c", ax=ax, label="so2 (f01)")
-    r2.plot(style="--r", ax=ax, label="so2 (f02)").set_ylabel("SO2 [cm-2]")
+    so2_default.plot(style="-b", ax=ax, label="so2 (default, f03)")
+    so2_fit01.plot(style="--c", ax=ax, label="so2 (f01)")
+    so2_fit02.plot(style="--r", ax=ax, label="so2 (f02)").set_ylabel("SO2 [cm-2]")
     ax.legend(loc='best', fancybox=True, framealpha=0.5, fontsize=9)
     ax.set_title("SO2")
     fig1.tight_layout(pad = 1, w_pad = 3.5, h_pad = 3.5)
     
     #now load the other species and plot them into the other axes objects
-    ds.get_results("bro").plot(ax = axes[0, 1], label = "bro",\
-                                title = "BrO").set_ylabel("BrO [cm-2]")
-    ds.get_results("o3").plot(ax = axes[1, 0], label = "o3",\
-                                title = "O3").set_ylabel("O3 [cm-2]")
-    ds.get_results("oclo").plot(ax = axes[1, 1], label = "oclo", title =\
-                                        "OClO").set_ylabel("OClO [cm-2]")
+    bro=ds.get_results("bro")
+    bro.plot(ax=axes[0, 1], label="bro", title="BrO").set_ylabel("BrO [cm-2]")
+    
+    o3=ds.get_results("o3")
+    o3.plot(ax=axes[1, 0], label="o3",
+            title="O3").set_ylabel("O3 [cm-2]")
+    oclo=ds.get_results("oclo")
+    oclo.plot(ax=axes[1, 1], label="oclo", 
+              title="OClO").set_ylabel("OClO [cm-2]")
     
     # Now calculate Bro/SO2 ratios of the time series and plot them with 
     # SO2 shaded on second y axis    
-    bro = ds.get_results("bro")
-    so2 = r0#ds.get_results("so2")
-    broso2 = bro/so2
+    broso2 = bro/so2_default
     
     fig2, axis = plt.subplots(1,1)
     broso2.plot(ax = axis, style=" o")
     axis.set_ylabel("BrO/SO2")
-    so2.plot(ax=axis, kind="area", secondary_y=True, alpha=0.3).\
+    so2_default.plot(ax=axis, kind="area", secondary_y=True, alpha=0.3).\
                                                 set_ylabel("SO2 CD [cm-2]")
     axis.set_title("Plot of BrO/SO2 ratio for pydoas example data")
     
-    plt.show()
+    if SAVEFIGS:
+        fig1.savefig(join(SAVE_DIR, "ex1_out1.%s" %FORMAT), 
+                     format=FORMAT, dpi=DPI)
+        fig2.savefig(join(SAVE_DIR, "ex1_out2.%s" %FORMAT),
+                     format=FORMAT, dpi=DPI)
     
-    if save_figs:
-        fig1.savefig(join(out_path, "ex1_out1.png"))
-        fig2.savefig(join(out_path, "ex1_out2.png"))
+    ### IMPORTANT STUFF FINISHED (Below follow tests and display options)
+    
+    # Import script options
+    (options, args) = OPTPARSE.parse_args()
+    
+    # If applicable, do some tests. This is done only if TESTMODE is active: 
+    # testmode can be activated globally (see SETTINGS.py) or can also be 
+    # activated from the command line when executing the script using the 
+    # option --test 1
+    if int(options.test):
+        ### under development
+        import numpy.testing as npt
+        from os.path import basename
+        
+        npt.assert_array_equal([len(so2_default)],
+                               [22])
+        
+        # check some propoerties of the basemap (displayed in figure)
 
-if __name__ == "__main__":
-    ds = import_example_results()
-    plot_some_examples(ds)
+        npt.assert_allclose(actual=[],
+                            desired=[],
+                            rtol=1e-7)
+        print("All tests passed in script: %s" %basename(__file__)) 
+    try:
+        if int(options.show) == 1:
+            plt.show()
+    except:
+        print("Use option --show 1 if you want the plots to be displayed")
+
     
     

@@ -23,12 +23,16 @@ setup(
     license     =   'BSD3',
     package_dir =   {'pydoas'     :   'pydoas'},
     packages    =   find_packages(exclude=['contrib', 'docs', 'tests*']),
-    include_package_data = True,            
-    package_data =   {'pydoas'          : ['data/*/*.dat', 
-                                           'data/*/*.csv',
-                                           'data/*.txt'],
-                      'pydoas.scripts'   : ['scripts/*.py']},
-
+    #include_package_data = True,            
+    package_data=   {'pydoas'     :   ['data/*.txt',
+                                       'data/*/*.csv',
+                                       'data/*/*.dat']
+                    },
+# =============================================================================
+#                                         'data/doasis_resultfiles/*.csv',
+#                                         'data/fake_resultfiles/*.csv']},
+# 
+# =============================================================================
 #    data_files = [('scripts', ['scripts/*.py'])],
     classifiers=[
         # How mature is this project? Common values are

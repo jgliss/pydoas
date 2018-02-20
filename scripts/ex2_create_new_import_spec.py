@@ -12,15 +12,18 @@ for the two fit IDs specified.
 
 """
 import pydoas
-from os.path import join, exists
+from os.path import join
 from collections import OrderedDict as od
 
+from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
 ### Path for output storage
 out_path = join(".", "scripts_out")
 
-def load_fake_results():
+if __name__ == "__main__":
+    ### creare some fake results:
+    
     ### Get data path
-    files, path = pydoas.inout.get_data_files(which = "fake")
+    files, path = pydoas.inout.get_data_files(which="fake")
     
     ### Specify default import parameters 
     # (this does not include resultfile columns of DOAS fit results)
@@ -49,14 +52,42 @@ def load_fake_results():
                 import_dict, meta_import_info = meta_import_info)
     
     #: Create Dataset object for setup...
-    return pydoas.analysis.DatasetDoasResults(stp)
-
-if __name__ == "__main__":
-    from matplotlib.pyplot import show
-    ds = load_fake_results()
+    ds = pydoas.analysis.DatasetDoasResults(stp)
+    
     ax = ds.scatter_plot("species3", "fit1", "species3", "fit2",\
                     species_id_zaxis = "species1", fit_id_zaxis = "fit1")
     ax.set_title("Ex.2, scatter + regr, fake species3")
-    show()
-    print("Outpath %s, exists (y/n) %s" %(out_path, exists(out_path)))
-    ax.figure.savefig(join(out_path, "ex2_out1_scatter.png"))
+    
+    if SAVEFIGS:
+        ax.figure.savefig(join(SAVE_DIR, "ex2_out1_scatter.%s" %FORMAT),
+                          format=FORMAT, dpi=DPI)
+
+    ### IMPORTANT STUFF FINISHED (Below follow tests and display options)
+    
+    # Import script options
+    (options, args) = OPTPARSE.parse_args()
+    
+    # If applicable, do some tests. This is done only if TESTMODE is active: 
+    # testmode can be activated globally (see SETTINGS.py) or can also be 
+    # activated from the command line when executing the script using the 
+    # option --test 1
+    if int(options.test):
+        import numpy.testing as npt
+        from os.path import basename
+        
+        npt.assert_array_equal([],
+                               [])
+        
+        # check some propoerties of the basemap (displayed in figure)
+
+        npt.assert_allclose(actual=[],
+                            desired=[],
+                            rtol=1e-7)
+        print("All tests passed in script: %s" %basename(__file__)) 
+    try:
+        if int(options.show) == 1:
+            from matplotlib.pyplot import show
+            show()
+    except:
+        print("Use option --show 1 if you want the plots to be displayed")
+    
