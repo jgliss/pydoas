@@ -16,11 +16,12 @@ from os.path import join
 from collections import OrderedDict as od
 
 from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
+
 ### Path for output storage
 out_path = join(".", "scripts_out")
 
 if __name__ == "__main__":
-    ### creare some fake results:
+    ### create some fake results:
     
     ### Get data path
     files, path = pydoas.inout.get_data_files(which="fake")
@@ -83,7 +84,7 @@ if __name__ == "__main__":
         npt.assert_allclose(actual=[],
                             desired=[],
                             rtol=1e-7)
-        print("All tests passed in script: %s" %basename(__file__)) 
+        print("No tests implemented in script: %s" %basename(__file__)) 
     try:
         if int(options.show) == 1:
             from matplotlib.pyplot import show

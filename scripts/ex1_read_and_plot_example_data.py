@@ -85,15 +85,16 @@ if __name__=="__main__":
     
     # Now calculate Bro/SO2 ratios of the time series and plot them with 
     # SO2 shaded on second y axis    
-    broso2 = bro/so2_default
+    bro_so2 = bro/so2_default
+    oclo_so2 = oclo/so2_default
     
-    fig2, axis = plt.subplots(1,1)
-    broso2.plot(ax = axis, style=" o")
-    axis.set_ylabel("BrO/SO2")
-    so2_default.plot(ax=axis, kind="area", secondary_y=True, alpha=0.3).\
-                                                set_ylabel("SO2 CD [cm-2]")
-    axis.set_title("Plot of BrO/SO2 ratio for pydoas example data")
-    
+    fig2, axis = plt.subplots(1,1, figsize=(12,8))
+    bro_so2.plot(ax=axis, style=" o", label="BrO/SO2")
+    oclo_so2.plot(ax=axis, style=" x", label="OClO/SO2")
+    #axis.set_ylabel("BrO/SO2")
+    so2_default.plot(ax=axis, kind="area",
+                     secondary_y=True, alpha=0.3).set_ylabel("SO2 CD [cm-2]")
+    axis.legend()
     if SAVEFIGS:
         fig1.savefig(join(SAVE_DIR, "ex1_out1.%s" %FORMAT), 
                      format=FORMAT, dpi=DPI)
@@ -112,15 +113,35 @@ if __name__=="__main__":
     if int(options.test):
         ### under development
         import numpy.testing as npt
+        import numpy as np
         from os.path import basename
         
-        npt.assert_array_equal([len(so2_default)],
-                               [22])
+        npt.assert_array_equal([len(so2_default),
+                                ds.get_default_fit_id("so2"),
+                                ds.get_default_fit_id("bro"),
+                                ds.get_default_fit_id("oclo")],
+                               [22, "f03", "f04", "f04"])
         
-        # check some propoerties of the basemap (displayed in figure)
-
-        npt.assert_allclose(actual=[],
-                            desired=[],
+        vals = [so2_default.mean(),
+                so2_default.std(),
+                so2_fit01.mean(),
+                so2_fit02.mean(),
+                bro.mean(),
+                oclo.mean(), 
+                bro_so2.mean(),
+                oclo_so2.mean(),
+                np.sum(ds.raw_results["f01"]["delta"])]
+        
+        npt.assert_allclose(actual=vals,
+                            desired=[9.626614500000001e+17,
+                                     9.785535879339162e+17,
+                                     1.0835821818181818e+18,
+                                     6.610916636363636e+17,
+                                     126046170454545.45,
+                                     42836762272727.27,
+                                     0.0001389915245877655,
+                                     7.579933107191676e-05,
+                                     0.125067],
                             rtol=1e-7)
         print("All tests passed in script: %s" %basename(__file__)) 
     try:
