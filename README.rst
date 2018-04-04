@@ -5,7 +5,7 @@ It supports default import of the result file format of
 News
 ====
 
-18 Feb 2018: Updated for Python 3 support
+18 Feb 2018: now also supports Python3
 
 Requirements
 ============
