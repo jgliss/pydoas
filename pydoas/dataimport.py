@@ -423,9 +423,6 @@ class DataImport(object):
             raise IOError("DOAS data import failed: result base directory "
                 "%s does not exist" %self.base_dir)
         self.load_result_type_info()
-        
-        s = "Bla\tblub"
-        print(s.split("\t"))
         self.get_all_files()
         self.load_results()
         try:

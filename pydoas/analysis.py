@@ -500,7 +500,7 @@ class DoasResults(Series):
         ax.set_ylabel(self.species)
         return ax
     
-    def shift(self, timedelta = timedelta(0.)):
+    def shift(self, timedelta=timedelta(0.)):
         """Shift time stamps of object
         
         :param timedelta timedelta: temporal shift 
@@ -515,7 +515,6 @@ class DoasResults(Series):
         if self.has_start_stop_acqtamps:
             new.start_acq += timedelta
             new.stop_acq += timedelta
-        print("BLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         return new
         
         
