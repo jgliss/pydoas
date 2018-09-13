@@ -14,13 +14,13 @@ Example 1 - Result import and plotting
 
 **Code output**
 
-.. thumbnail::  ../scripts/scripts_out/ex1_out1.png
-  :title:
+.. figure::  ../scripts/scripts_out/ex1_out1.png
+  :align: center
   
   Ex1, Fig. 1: Time series of example results for 3 SO2 fits (top left), BrO (top right), O3 (bottom left) and OClO (bottom right)
    
-.. thumbnail::  ../scripts/scripts_out/ex1_out2.png
-  :title:
+.. figure::  ../scripts/scripts_out/ex1_out2.png
+  :align: center
   
   Ex2, Fig. 2: Time series of BrO/SO2 ratio (left y-axis) and corresponding SO2 CDs (green shaded, right y-axis) for same time series as shown in Fig. 1 
   
@@ -33,8 +33,8 @@ Example 2 - Define new import type and load fake data
 
 **Code output**
 
-.. thumbnail::  ../scripts/scripts_out/ex2_out1_scatter.png
-  :title:
+.. figure::  ../scripts/scripts_out/ex2_out1_scatter.png
+  :align: center
   
   Ex2, Fig. 1: Scatter plot of fake species3 (fit1 vs. fit2) with species 1 (fit1) color coded
    
