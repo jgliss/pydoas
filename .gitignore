@@ -90,3 +90,8 @@ ENV/
 
 # .bak files
 *.bak
+
+# hidden folders
+.idea/
+.pytest/
+.pytest_cache/
