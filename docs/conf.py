@@ -29,16 +29,6 @@ with open(os.path.join("..", "VERSION.rst")) as f:
 
 sys.path.insert(0, os.path.abspath('../'))
 
-try:
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import Mock as MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
-
 MOCK_MODULES = [
     'numpy',
     'pandas'
