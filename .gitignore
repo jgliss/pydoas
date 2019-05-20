@@ -90,3 +90,5 @@ ENV/
 
 # .bak files
 *.bak
+
+.pytest_cache

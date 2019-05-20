@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 with open('README.rst') as file:
     readme = file.read()
 
-with open("VERSION.rst") as f:
+with open("VERSION") as f:
     version = f.readline()
     f.close()
     
@@ -51,12 +51,12 @@ setup(
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.,
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6'
+        'Programming Language :: Python :: 3'
     ],
 
     install_requires    =   [],
     dependency_links    =   [],
     description = ("A Python toolbox for post analysis of DOAS "
-            "(Differential Optical Absorbtion Spectroscopy) results"),
+                   "(Differential Optical Absorbtion Spectroscopy) results"),
     long_description = readme,
 )

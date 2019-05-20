@@ -13,19 +13,18 @@ import pytest
 import pydoas
 import numpy.testing as npt
 
-@pytest.fixture
-def example_dataset(scope="module"):
+@pytest.fixture(scope="module")
+def example_dataset():
     files, path = pydoas.get_data_files("doasis")
     ### Specify the the import details
     
     # here, 3 x SO2 from the first 3 fit scenario result files (f01, f02, f03) 
     # BrO from f04, 2 x O3 (f02, f04) and OClO (f04)
-    import_dict = {'so2'  : ['SO2_Hermans_298_air_conv',\
-                                                     ['f01','f02','f03']],
+    import_dict = {'so2'  : ['SO2_Hermans_298_air_conv',
+                            ['f01','f02','f03']],
                    'bro'  : ['BrO_Wil298_Air_conv',['f04']],
-                   'o3'   : ['o3_221K_air_burrows_1999_conv',\
-                                                         ['f02', 'f04']],
-                   'oclo' : ['OClO_293K_Bogumil_2003_conv',['f04']]}
+                   'o3'   : ['o3_221K_air_burrows_1999_conv', ['f02', 'f04']],
+                   'oclo' : ['OClO_293K_Bogumil_2003_conv', ['f04']]}
      ### Specify the default fit scenarios for each species
     
     # After import, the default fit scenarios for each species are used
@@ -53,8 +52,8 @@ def example_dataset(scope="module"):
     ds.load_raw_results()
     return ds
 
-def test_dataset_lowlevel():
-    ds = example_dataset()
+def test_dataset_lowlevel(example_dataset):
+    ds = example_dataset
     raw = ds.raw_results
     
     npt.assert_array_equal([sum([x in raw.keys() 
@@ -101,10 +100,9 @@ def test_dataset_lowlevel():
                                  37.76599999999999, 
                                  0.0010376686363636363],
                         rtol=1e-7)
-def test_main_results():
-    ds = example_dataset()
-     ### plot_some_examples
-
+def test_main_results(example_dataset):
+    
+    ds = example_dataset
     #load all SO2 results
     so2_default = ds.get_results("so2")
     so2_fit01 = ds.get_results("so2", "f01")

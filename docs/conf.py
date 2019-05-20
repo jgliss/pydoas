@@ -24,7 +24,7 @@ compat.make_admonition = BaseAdmonition
 
 matplotlib.use('agg')
 
-with open(os.path.join("..", "VERSION.rst")) as f:
+with open(os.path.join("..", "VERSION")) as f:
     __version__ = f.readline()
     f.close()
 
