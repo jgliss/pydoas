@@ -7,13 +7,6 @@ News
 
 18 Feb 2018: now also supports Python3
 
-Requirements
-============
-
-- numpy
-- matplotlib
-- pandas 
-
 Copyright
 =========
 
@@ -23,10 +16,17 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See BSD 3-Clause License for more details (https://opensource.org/licenses/BSD-3-Clause)
 
+Requirements
+============
+
+- numpy
+- matplotlib
+- pandas
+
 Installation
 ============
 
-pydoas can be installed from `PyPi <https://pypi.python.org/pypi/pydoas>`__ using::
+First, make sure to have all requirements installed (prev. section). Then, pydoas can be installed from `PyPi <https://pypi.python.org/pypi/pydoas>`__ using::
 
   pip install pydoas
   
@@ -41,7 +41,7 @@ Instructions and code documentation
 
 The code documentation of pydoas is hosted `here <http://pydoas.readthedocs.io/en/latest/index.html>`_
 
-Get started
-===========
+Getting started
+===============
 
 After installation try running the `example scripts <http://pydoas.readthedocs.io/en/latest/examples.html>`_ in order to test the installation. The scripts are also meant to provide an easy start into the main features of pydoas.
