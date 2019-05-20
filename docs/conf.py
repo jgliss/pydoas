@@ -14,7 +14,6 @@
 
 import sys
 import os
-import shlex
 import matplotlib
 
 # This was inserted based on this blog: https://github.com/spinus/sphinxcontrib-images/issues/41, after the following build error occured: Could not import extension sphinxcontrib.images (exception: cannot import name make_admonition), apparently due to a compatibility error between an updated version of sphinx (1.6) and the extension sphinxcontrib.images
@@ -29,16 +28,6 @@ with open(os.path.join("..", "VERSION")) as f:
     f.close()
 
 sys.path.insert(0, os.path.abspath('../'))
-
-try:
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import Mock as MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-        return Mock()
 
 MOCK_MODULES = [
     'numpy',
@@ -79,7 +68,6 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.graphviz',
-    'sphinxcontrib.images',
     'sphinxcontrib.napoleon',
 ]
 # Add any paths that contain templates here, relative to this directory.
