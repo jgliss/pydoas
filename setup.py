@@ -18,7 +18,7 @@ setup(
     name        =   'pydoas',
     version     =   version,
     author      =   'Jonas Gliss',
-    author_email=   'jg@nilu.no',
+    author_email=   'jonasgliss@gmail.com',
     url         =   'https://github.com/jgliss/pydoas.git',
     license     =   'BSD3',
     package_dir =   {'pydoas'     :   'pydoas'},
