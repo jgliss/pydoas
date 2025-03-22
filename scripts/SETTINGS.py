@@ -38,5 +38,5 @@ SCRIPTS_DIR = pathlib.Path(__file__).parent
 SAVE_DIR = SCRIPTS_DIR / "scripts_out"
 
 ARGPARSER = argparse.ArgumentParser()
-ARGPARSER.add_argument('--show', dest="show", default=SCREENPRINT)
-ARGPARSER.add_argument('--test', dest="test", default=TESTMODE)
+ARGPARSER.add_argument('--show', default=SCREENPRINT)
+ARGPARSER.add_argument('--test', default=TESTMODE)

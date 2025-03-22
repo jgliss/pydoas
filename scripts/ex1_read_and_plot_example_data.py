@@ -11,12 +11,13 @@ import pydoas
 import matplotlib.pyplot as plt
 from os.path import join
 
-from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
+from SETTINGS import SAVE_DIR, SAVEFIGS, ARGPARSER, DPI, FORMAT
 
-if __name__=="__main__":
+
+def main():
     plt.close("all")
     ### Get example data base path and all files in there
-    files, path = pydoas.get_data_files("doasis")
+    _, path = pydoas.get_data_files("doasis")
     
     ### Device ID of the spectrometer (of secondary importance)
     dev_id = "avantes"
@@ -103,7 +104,7 @@ if __name__=="__main__":
     ### IMPORTANT STUFF FINISHED (Below follow tests and display options)
     
     # Import script options
-    (options, args) = OPTPARSE.parse_args()
+    options = ARGPARSER.parse_args()
     
     # If applicable, do some tests. This is done only if TESTMODE is active: 
     # testmode can be activated globally (see SETTINGS.py) or can also be 
@@ -149,5 +150,5 @@ if __name__=="__main__":
     except:
         print("Use option --show 1 if you want the plots to be displayed")
 
-    
-    
+if __name__=="__main__":
+    main()

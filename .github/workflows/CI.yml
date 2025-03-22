@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
         os: [ubuntu-latest, windows-latest]
     steps:
     - uses: actions/checkout@v4
@@ -46,4 +46,5 @@ jobs:
           flags: unittests
     - name: Run example scripts
       run: |
-        python scripts/ex1_read_and_plot_example_data.py
+        python scripts/ex1_read_and_plot_example_data.py --show 0 --test 1
+        python scripts/ex2_create_new_import_spec.py --show 0 --test 1

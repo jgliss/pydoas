@@ -95,3 +95,4 @@ ENV/
 .idea/
 .pytest/
 .pytest_cache/
+.vscode/

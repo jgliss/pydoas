@@ -15,16 +15,13 @@ import pydoas
 from os.path import join
 from collections import OrderedDict as od
 
-from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
+from SETTINGS import SAVE_DIR, SAVEFIGS, ARGPARSER, DPI, FORMAT
 
-### Path for output storage
-out_path = join(".", "scripts_out")
-
-if __name__ == "__main__":
+def main():
     ### create some fake results:
     
     ### Get data path
-    files, path = pydoas.inout.get_data_files(which="fake")
+    _, path = pydoas.inout.get_data_files(which="fake")
     
     ### Specify default import parameters 
     # (this does not include resultfile columns of DOAS fit results)
@@ -66,7 +63,7 @@ if __name__ == "__main__":
     ### IMPORTANT STUFF FINISHED (Below follow tests and display options)
     
     # Import script options
-    (options, args) = OPTPARSE.parse_args()
+    options = ARGPARSER.parse_args()
     
     # If applicable, do some tests. This is done only if TESTMODE is active: 
     # testmode can be activated globally (see SETTINGS.py) or can also be 
@@ -92,3 +89,5 @@ if __name__ == "__main__":
     except:
         print("Use option --show 1 if you want the plots to be displayed")
     
+if __name__ == "__main__":
+    main()
