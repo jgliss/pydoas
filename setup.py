@@ -28,12 +28,7 @@ setup(
                                        'data/*/*.csv',
                                        'data/*/*.dat']
                     },
-# =============================================================================
-#                                         'data/doasis_resultfiles/*.csv',
-#                                         'data/fake_resultfiles/*.csv']},
-# 
-# =============================================================================
-#    data_files = [('scripts', ['scripts/*.py'])],
+                    
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
