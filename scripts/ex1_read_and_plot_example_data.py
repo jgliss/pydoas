@@ -28,12 +28,11 @@ if __name__=="__main__":
     
     # here, 3 x SO2 from the first 3 fit scenario result files (f01, f02, f03) 
     # BrO from f04, 2 x O3 (f02, f04) and OClO (f04)
-    import_dict = {'so2'  : ['SO2_Hermans_298_air_conv',\
-                                                     ['f01','f02','f03']],
-                   'bro'  : ['BrO_Wil298_Air_conv',['f04']],
-                   'o3'   : ['o3_221K_air_burrows_1999_conv',\
-                                                         ['f02', 'f04']],
-                   'oclo' : ['OClO_293K_Bogumil_2003_conv',['f04']]}
+    import_dict = {
+        'so2'  : ['SO2_Hermans_298_air_conv', ['f01','f02','f03']],
+        'bro'  : ['BrO_Wil298_Air_conv', ['f04']],
+        'o3'   : ['o3_221K_air_burrows_1999_conv', ['f02', 'f04']],
+        'oclo' : ['OClO_293K_Bogumil_2003_conv',['f04']]}
     
     ### Specify the default fit scenarios for each species
     

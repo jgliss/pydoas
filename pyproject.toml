@@ -5,50 +5,38 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pydoas"
 dynamic = ["version"]
-version = "0.0.0"  # This should be dynamically set from the VERSION file
 authors = [
     { name = "Jonas Gliss", email = "jonasgliss@gmail.com" },
 ]
 description = "A Python toolbox for post-analysis of DOAS (Differential Optical Absorption Spectroscopy) results"
 readme = "README.rst"
 requires-python = ">=3.9, <3.13"
-license = { text = "BSD-3-Clause" }
+license = "BSD-3-Clause"
 dependencies = [
     "numpy",
     "pandas",
-    "matplotlib",
-    
+    "matplotlib"   
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
 ]
 
 [project.urls]
 Homepage = "https://github.com/jgliss/pydoas"
+Documentation = "https://pydoas.readthedocs.io"
 
 [tool.setuptools]
-packages = ["pydoas"]
+include-package-data = true
 
 [tool.setuptools.dynamic]
 version = {file=["VERSION"]}
 
 [tool.setuptools.package-data]
-pydoas = [
-    "data/*.txt",
-    "data/*/*.csv",
-    "data/*/*.dat"
-]
-
-[project.classifiers]
-# Development Status
-"Development Status :: 5 - Production/Stable"
-
-# Audience
-"Intended Audience :: Science/Research"
-"Intended Audience :: Education"
-
-# License
-"License :: OSI Approved :: BSD License"
-
-# Supported Python versions
-"Programming Language :: Python :: 3.9"
-"Programming Language :: Python :: 3.10"
-"Programming Language :: Python :: 3.11"
-"Programming Language :: Python :: 3.12"
+pydoas = ["data/import_info.txt"]

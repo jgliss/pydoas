@@ -14,11 +14,9 @@
 """
 This module contains I/O routines for DOAS result files
 """
-from __future__ import unicode_literals
 from os.path import join
 from os import listdir
 from collections import OrderedDict as od
-
 
 def get_data_dirs():
     """Get directories containing example package data

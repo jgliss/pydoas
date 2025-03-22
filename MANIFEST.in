@@ -1,3 +1,0 @@
-include scripts/*.py
-include VERSION
-include LICENSE
