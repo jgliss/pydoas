@@ -6,9 +6,6 @@ Author: Jonas Gliß
 Email: jonasgliss@gmail.com
 License: GPLv3+
 """
-
-
-from __future__ import division
 import pytest
 import pydoas
 import numpy.testing as npt
@@ -100,8 +97,8 @@ def test_dataset_lowlevel(example_dataset):
                                  37.76599999999999, 
                                  0.0010376686363636363],
                         rtol=1e-7)
-def test_main_results(example_dataset):
     
+def test_main_results(example_dataset):
     ds = example_dataset
     #load all SO2 results
     so2_default = ds.get_results("so2")
@@ -148,8 +145,3 @@ def test_main_results(example_dataset):
                                  4.046278032004655, 
                                  3.4814157916895985],
                         rtol=1e-7)
-    
-if __name__=="__main__":
-    ### Get example data base path and all files in there
-    test_dataset_lowlevel()
-    test_main_results()

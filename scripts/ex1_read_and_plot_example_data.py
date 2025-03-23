@@ -11,12 +11,13 @@ import pydoas
 import matplotlib.pyplot as plt
 from os.path import join
 
-from SETTINGS import SAVE_DIR, SAVEFIGS, OPTPARSE, DPI, FORMAT
+from SETTINGS import SAVE_DIR, SAVEFIGS, ARGPARSER, DPI, FORMAT
 
-if __name__=="__main__":
+
+def main():
     plt.close("all")
     ### Get example data base path and all files in there
-    files, path = pydoas.get_data_files("doasis")
+    _, path = pydoas.get_data_files("doasis")
     
     ### Device ID of the spectrometer (of secondary importance)
     dev_id = "avantes"
@@ -28,12 +29,11 @@ if __name__=="__main__":
     
     # here, 3 x SO2 from the first 3 fit scenario result files (f01, f02, f03) 
     # BrO from f04, 2 x O3 (f02, f04) and OClO (f04)
-    import_dict = {'so2'  : ['SO2_Hermans_298_air_conv',\
-                                                     ['f01','f02','f03']],
-                   'bro'  : ['BrO_Wil298_Air_conv',['f04']],
-                   'o3'   : ['o3_221K_air_burrows_1999_conv',\
-                                                         ['f02', 'f04']],
-                   'oclo' : ['OClO_293K_Bogumil_2003_conv',['f04']]}
+    import_dict = {
+        'so2'  : ['SO2_Hermans_298_air_conv', ['f01','f02','f03']],
+        'bro'  : ['BrO_Wil298_Air_conv', ['f04']],
+        'o3'   : ['o3_221K_air_burrows_1999_conv', ['f02', 'f04']],
+        'oclo' : ['OClO_293K_Bogumil_2003_conv',['f04']]}
     
     ### Specify the default fit scenarios for each species
     
@@ -104,7 +104,7 @@ if __name__=="__main__":
     ### IMPORTANT STUFF FINISHED (Below follow tests and display options)
     
     # Import script options
-    (options, args) = OPTPARSE.parse_args()
+    options = ARGPARSER.parse_args()
     
     # If applicable, do some tests. This is done only if TESTMODE is active: 
     # testmode can be activated globally (see SETTINGS.py) or can also be 
@@ -150,5 +150,5 @@ if __name__=="__main__":
     except:
         print("Use option --show 1 if you want the plots to be displayed")
 
-    
-    
+if __name__=="__main__":
+    main()

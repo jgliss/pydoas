@@ -11,15 +11,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 # See BSD 3-Clause License for more details 
 # (https://opensource.org/licenses/BSD-3-Clause)
-from pkg_resources import get_distribution
-
-__version__ = get_distribution('pydoas').version
+from importlib import metadata
+__version__ = metadata.version(__package__)
 
 from os.path import abspath, dirname
 
 _LIBDIR = abspath(dirname(__file__))
 
-from .inout import *  #from .io import get_data_dirs, get_data_files
+from .inout import *
 from . import helpers
 from .dataimport import ResultImportSetup
 from .analysis import DatasetDoasResults, DoasResults

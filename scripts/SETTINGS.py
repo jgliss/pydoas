@@ -15,9 +15,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-from os.path import join, abspath
-from optparse import OptionParser
+import argparse
+import pathlib
 from matplotlib import rcParams
 
 
@@ -34,9 +33,10 @@ FORMAT = "png" #format for saving
 SCREENPRINT = 0 #show images on screen when executing script
 
 # Directory where results are stored
+# Directory where results are stored
+SCRIPTS_DIR = pathlib.Path(__file__).parent
+SAVE_DIR = SCRIPTS_DIR / "scripts_out"
 
-SAVE_DIR = abspath(join(".", "scripts_out"))
-
-OPTPARSE = OptionParser(usage='')
-OPTPARSE.add_option('--show', dest="show", default=SCREENPRINT)
-OPTPARSE.add_option('--test', dest="test", default=TESTMODE)
+ARGPARSER = argparse.ArgumentParser()
+ARGPARSER.add_argument('--show', default=SCREENPRINT)
+ARGPARSER.add_argument('--test', default=TESTMODE)

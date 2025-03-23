@@ -20,7 +20,7 @@ import matplotlib.colors as colors
 from datetime import datetime, time, date
 
 from matplotlib.pyplot import draw
-from numpy import linspace, hstack, vectorize, int, floor, log10, isnan
+from numpy import linspace, hstack, vectorize, floor, log10, isnan
 
 exponent = lambda num: int(floor(log10(abs(num))))
 
