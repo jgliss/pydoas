@@ -13,8 +13,12 @@ author = "Jonas Gliss"
 copyright = "2016, Jonas Gliss"
 
 # Versioning
-project_name = __name__.split('.')[0]
-version = get_version(project_name)
+try:
+    version = get_version("pydoas")
+except Exception as e:
+    print(f"FAILED TO RETRIEVE PYDOAS VERSION. Reason: {e}")
+    version = "0.0.0"
+
 release = version
 
 # Sphinx extensions
