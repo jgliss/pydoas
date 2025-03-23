@@ -11,7 +11,7 @@ Further import formats for fast data access can easily be defined by the user.
 .. note::
 
   pydoas is not a library for performing DOAS spectrum analysis. An overview and assessment of existing DOAS
-  retrieval codes can by found e.g. in `Peters et al., 2017 <https://amt.copernicus.org/articles/10/955/2017/amt-10-955-2017.html>_`
+  retrieval codes can by found e.g. in `Peters et al., 2017 <https://amt.copernicus.org/articles/10/955/2017/amt-10-955-2017.html>`_
 
 Documentation: https://pydoas.readthedocs.io/en/latest/
 
