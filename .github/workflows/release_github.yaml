@@ -2,7 +2,7 @@ name: Create Github Release
 on:
   push:
     tags:
-      - 'v*'
+      - '**'
   workflow_dispatch:
 
 permissions:
