@@ -2,9 +2,10 @@ name: pydoas-dev
 channels:
   - conda-forge
 dependencies:
-  - python>=3.9
+  - python>=3.10
   - numpy
   - pandas
   - matplotlib-base
   - pytest # for tests
   - pytest-cov # for test coverage check
+  - setuptools_scm # needed in CI.yml and for locally checking current version
