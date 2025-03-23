@@ -12,7 +12,7 @@
 # See BSD 3-Clause License for more details 
 # (https://opensource.org/licenses/BSD-3-Clause)
 from importlib import metadata
-__version__ = metadata.version(__package__)
+__version__ = metadata.version("pydoas")
 
 from os.path import abspath, dirname
 
