@@ -6,14 +6,21 @@
 Welcome to pydoas
 =================
 
-pydoas provides high level functionality for import of text file based results from DOAS analyses (i.e. it cannot  perform the actual DOAS retrieval). It supports default import routines for the result file format of the software DOASIS.
+pydoas provides high level functionality for import of text file based results from DOAS analyses (i.e. it cannot  perform the actual DOAS retrieval).
+It supports default import routines for the result file format of the software DOASIS.
+
+.. note::
+
+  pydoas is not a library for performing DOAS spectrum analysis. An overview and assessment of existing DOAS
+  retrieval codes can by found e.g. in `Peters et al., 2017 <https://amt.copernicus.org/articles/10/955/2017/amt-10-955-2017.html>_`
+
 
 **Contents:**
 
 .. toctree::
    :maxdepth: 3
-
-   readme_link
+   
+   practicalities
    examples
    api
    supplemental
