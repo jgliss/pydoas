@@ -23,7 +23,6 @@ It supports default import routines for the result file format of the software D
    practicalities
    examples
    api
-   supplemental
    remarks_doas_analysis
 
 
