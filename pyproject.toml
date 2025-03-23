@@ -38,9 +38,6 @@ Documentation = "https://pydoas.readthedocs.io"
 packages = ["pydoas", "pydoas.data"]
 include-package-data = true
 
-[tool.setuptools.dynamic]
-version = {file=["VERSION"]}
-
 [tool.setuptools.package-data]
 pydoas = [
     "data/import_info.txt",
