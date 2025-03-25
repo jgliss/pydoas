@@ -10,9 +10,8 @@ authors = [
 ]
 description = "A Python toolbox for post-analysis of DOAS (Differential Optical Absorption Spectroscopy) results"
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "BSD-3-Clause"
-license-files = ["LICENSE"]
 
 dependencies = [
     "numpy",
