@@ -167,7 +167,6 @@ class DatasetDoasResults(object):
         start_acq, stop_acq = [], []
         
         for fit_id in self.raw_results:
-            print(fit_id)
             ts, _ = self.get_spec_times(fit_id)
             if len(ts) > 0:
                 start_acq.append(ts.min())
@@ -206,7 +205,6 @@ class DatasetDoasResults(object):
             
         """
         if meta_id not in self.raw_results[fit]:
-            print(("Could not return meta info, unknown meta ID %s" %meta_id))
             return 0
         m, start, stop = self.get_start_stop_mask(fit, start, stop)
         return Series(self.raw_results[fit][meta_id][m], start)
@@ -234,18 +232,14 @@ class DatasetDoasResults(object):
         if fit_id is None:
             fit_id = self.setup.default_fit_ids[species_id]
         if not fit_id in self.setup.get_fit_ids():
-            print(("Failed to load DOAS results, invalid fit ID %s" %fit_id))
             return False
         m, start, stop = self.get_start_stop_mask(fit_id, start, stop)
         if not sum(m):
-            print ("Failed to load DOAS results, no data found for "
-                            "specified time interval..")
             return False
         dat = self._get_data(species_id, fit_id)[m]
         times = start + (stop - start) / 2
         dat_err = self._get_data((species_id + "_err"), fit_id)[m]
-        return DoasResults(dat, times, start, stop, dat_err, species_id,\
-                                                                fit_id, 3)
+        return DoasResults(dat, times, start, stop, dat_err, species_id, fit_id, 3)
 
     def get_default_fit_id(self, species_id):
         """Get default fit scenario id for species
@@ -357,16 +351,13 @@ class DatasetDoasResults(object):
             except:
                 pass
 
-        print(("Item %s could not be found..." %key))
-    
     def __setitem__(self, key, val):
         """Change attribute value using bracket syntax"""
         for k,v in list(self.__dict__.items()):
             if k == key:
                 self.__dict__[key] = val
                 return               
-        print(("Item %s could not be updated..." %key))
-    
+       
     def __str__(self):
         """String representation"""
         return ("\nDOAS result dataset\n-------------------\n" + str(self.setup))
@@ -436,12 +427,10 @@ class DoasResults(Series):
                 raise Exception("Invalid value encountered in start_acq")
             if not all([isinstance(x, datetime) for x in self.stop_acq]):
                 raise Exception("Invalid value encountered in stop_acq")
-            if not all([len(self) == len(x) for x in [self.start_acq,\
-                                                            self.stop_acq]]):
+            if not all([len(self) == len(x) for x in [self.start_acq, self.stop_acq]]):
                 raise Exception("Lengths of arrays do not match...")
             return True
-        except Exception as e:
-            print((repr(e)))
+        except Exception:
             return False
        
     def merge_other(self, other, itp_method="linear", dropna=True):

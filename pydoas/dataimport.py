@@ -112,8 +112,14 @@ class ResultImportSetup(object):
         
         self.check_time_stamps()
         
-        self.minimum_meta_keys = ["start", "delim", "access_type",\
-                        "has_header_line", "file_type", "time_str_formats"]
+        self.minimum_meta_keys = [
+            "start", 
+            "delim", 
+            "access_type", 
+            "has_header_line", 
+            "file_type", 
+            "time_str_formats"
+            ]
         self.set_defaults(default_dict)
         self.set_fitcorr_factors(doas_fit_err_factors)
         
@@ -123,12 +129,10 @@ class ResultImportSetup(object):
             self.meta_import_info.update(meta_import_info)
         
         if not all([x in list(self.meta_import_info.keys()) for x in self.minimum_meta_keys]):
-            raise ImportError("Please specify at least the following "
-                "parameters: %s, available keys are: %s" 
-                %(self.minimum_meta_keys, list(self.meta_import_info.keys())))
+            raise ImportError(f"Please specify at least the following "
+                f"parameters: {self.minimum_meta_keys}, available keys are: {list(self.meta_import_info.keys())}")
         if self.access_type == "header_str" and not self.meta_import_info["has_header_line"]:
-            raise Exception("Invalid combination of result file settings: "
-                "has_header_line == False and access_type == header_str")
+            raise ValueError("Invalid combination of result file settings: has_header_line == False and access_type == header_str")
             
     @property
     def start(self):
@@ -166,7 +170,6 @@ class ResultImportSetup(object):
         
         """
         if not isinstance(dt, datetime):
-            print(("Start time %s could not be updated" %dt))
             return False
         self.start = dt
         self.check_time_stamps()
@@ -179,7 +182,6 @@ class ResultImportSetup(object):
         
         """
         if not isinstance(dt, datetime):
-            print(("Stop time %s could not be updated" %dt))
             return False
         self.stop = dt
         self.check_time_stamps()
@@ -231,12 +233,8 @@ class ResultImportSetup(object):
         for species, info in list(self.import_info.items()):
             if species in dict_like:
                 v = dict_like[species]
-                print(("Found default fit info for %s in input dict: %s"
-                                                            %(species, v)))
             else:
                 v = info[1][0]
-                print(("Failed to find default fit info for %s in input dict, "
-                    "use first fit in import info dict: %s " %(species, v)))
             self.default_fit_ids[species] = v
         return True
     
@@ -266,11 +264,7 @@ class ResultImportSetup(object):
         """Set and return the string IDs of all fitted species"""
         xs = []
         for key, val in list(self.import_info.items()):
-            if val[0] in xs:
-                print(("Error: %s was already found with a different key. "
-                       "Current key: %s. Please check fit import settings" 
-                                                            %(val[0], key)))
-            else:
+            if val[0] not in xs:
                 xs.append(val[0])
         xs.sort()
         return xs
@@ -282,8 +276,6 @@ class ResultImportSetup(object):
         
         """
         if not species_id in list(self.import_info.keys()):
-            print(("Error: species with ID " + str(species_id) + " not "
-                "available in ResultImportSetup"))
             return 0
         return self.import_info[species_id][1]
     
@@ -318,7 +310,7 @@ class ResultImportSetup(object):
         Gets all fit ids (i.e. keys of fit import dict ``self.import_info``)        
         """
         ids = []
-        for key, val in list(self.import_info.items()):
+        for val in list(self.import_info.values()):
             sublist = val[1]
             for substr in sublist:
                 if substr not in ids:
@@ -330,25 +322,22 @@ class ResultImportSetup(object):
         """Get a class attribute using bracketed syntax"""
         if key in self.__dict__:
             return self.__dict__[key]
-        print(("Class attribute %s does not exist in ResultImportSetup" %key))
     
     def __setitem__(self, key, val):
         """Set a class attribute using bracketed syntax"""
         if key in self.__dict__:
             self.__dict__[key] = val
-        print(("Class attribute %s does not exist in ResultImportSetup" %key))
-    
+
     def __str__(self):
         """String representation of this class"""
-        s=("\nSetup\n---------\n\n"
-            "Base path: %s\n" 
-            "Start: %s\n"
-            "Stop: %s\n"
-            %(self.base_dir, self.start, self.stop))
-        s = s + "n\Absorption cross sections\n"
+        s = (f"\nSetup\n---------\n\n"
+             f"Base path: {self.base_dir}\n"
+             f"Start: {self.start}\n"
+             f"Stop: {self.stop}\n")
+        s = s + "\n Absorption cross sections\n"
         for key, val in list(self.import_info.items()):
-            s = s + "%s: %s\n" %(key, val[0])
-        s = s + "Fit scenario IDs\n%s\n" %self.fit_ids
+            s = s + f"{key}: {val[0]}\n"
+        s = s + f"Fit scenario IDs\n{self.fit_ids}\n"
             
         return s
            
@@ -408,15 +397,8 @@ class DataImport(object):
         self.load_result_type_info()
         self.get_all_files()
         self.load_results()
-        try:
-            self.load_result_type_info()
-            self.get_all_files()
-            self.load_results()
-            return True
-        except Exception as e:
-            print(("Data import failed: %s" %repr(e)))
-            return False
-
+        return True
+    
     def load_result_type_info(self):
         """Load import information for result type specified in setup
         
@@ -445,16 +427,14 @@ class DataImport(object):
             try:
                 val = self._import_conv_funcs[key](val)
             except:
-                print(("Failed to convert input %s, %s into data type %s"
-                       %(key, val, self._import_conv_funcs[key])))
                 return False
+            
         if key in self.__dict__:
             self.__dict__[key] = val
             return True
         if key in self._meta_ids:
             self._meta_ids[key] = val
             return True
-        #print "Could not update attribute %s : %s" %(key, val)
         return False
         
     @property
@@ -547,8 +527,6 @@ class DataImport(object):
                     substr = self.species_pre_string + info[0]
                     idx = self.find_col_index(substr, fileheader)
                 else:
-                    print(("set %s col for fit ID %s at column %s"
-                           %(species, fit_id, info[0])))
                     idx = info[0] 
                 if idx != -1:                      
                     ind[species] = idx
@@ -580,9 +558,6 @@ class DataImport(object):
                 ind, warnings = self.find_all_indices(data[0], fit_id)
                 if bool(warnings):
                     all_warnings.append(warnings)
-                print(("First spectrum time: %s" %datetime.strptime(data[\
-                    self.setup.FIRST_DATA_ROW_INDEX][ind["start"]],\
-                                                self.time_str_format)))
 
                 #Here, the import begins (loop over data rows in file)
                 for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
@@ -592,16 +567,13 @@ class DataImport(object):
                         for key, index in list(ind.items()):
                             try:
                                 if key in ["start", "stop"]:
-                                    self.results[fit_id][key].append(\
-                                        datetime.strptime(data[k][index],\
-                                                    self.time_str_format))
+                                    _t=datetime.strptime(data[k][index], self.time_str_format)
+                                    self.results[fit_id][key].append(_t)
                                 else:
                                     #try to convert the entry into float
-                                    self.results[fit_id][key].append(\
-                                                    float(data[k][index]))
+                                    self.results[fit_id][key].append(float(data[k][index]))
                             except:
-                                self.results[fit_id][key].append(\
-                                                        data[k][index])
+                                self.results[fit_id][key].append(data[k][index])
                                 
                                 
         for key, dic in list(self.results.items()):
@@ -622,8 +594,7 @@ class DataImport(object):
         """
         try:
             return next((i for i, s in enumerate(header) if substr in s), -1)
-        except Exception as e:
-            print((repr(e)))
+        except Exception:
             return -1
     
     def _update_time_str_format(self, data):
@@ -633,15 +604,12 @@ class DataImport(object):
             col = self.find_col_index(self._meta_ids["start"], data[0])
         else:
             col = self.setup.meta_import_info["start"]
-        if col is -1:
+        if col == -1:
             return 0
         fmts = self.time_str_formats
         for k in range(len(fmts)):
             try:
-                print((data[self.setup.FIRST_DATA_ROW_INDEX][col]))
-                print((fmts[k]))
                 func(data[self.setup.FIRST_DATA_ROW_INDEX][col],fmts[k])
-                print(("Found time string format %s" %fmts[k]))
                 self._time_str_index = k
                 return 1
             except:
@@ -659,7 +627,7 @@ class DataImport(object):
             col = self.find_col_index(self._meta_ids["start"], data[0])
         else:
             col = self.setup.meta_import_info["start"]
-        if col is -1:
+        if col == -1:
             return 0
         if self.start is None or self.stop is None:
             return 1
@@ -667,9 +635,7 @@ class DataImport(object):
         #loop over all fitted spectra in the file and find matches
         for k in range(self.setup.FIRST_DATA_ROW_INDEX, last_index):
             t = func(data[k][col], self.time_str_format)
-            print(t)
             if self.start < t < self.stop:
-                print(("Found data file match %s" %t))
                 return 1
         return 0
     

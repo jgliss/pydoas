@@ -75,7 +75,6 @@ def get_import_info(resulttype="doasis"):
         found = 0
         for line in f: 
             if "ENDTYPE" in line and found:
-                print(dat)
                 return dat
             spl = line.split(":", 1)
             if spl[0] == "type" and spl[1].split("#")[0].strip() ==\
@@ -89,7 +88,6 @@ def get_import_info(resulttype="doasis"):
                         dat[k] = d
 
                     elif k == "delim":
-                        print(decode(d[0],"unicode-escape"))
                         dat[k] = decode(d[0], "unicode-escape")
                     else:
                         try:
@@ -116,12 +114,10 @@ def write_import_info_to_default_file(import_dict: dict, file: Optional[str] = N
     keys = list(get_import_info().keys())
     if file is None:
         file = import_info_file()
-    print(("Writing to %s" %file))
     with open(file, "a") as myfile:
         myfile.write("\n\nNEWTYPE\n")
         for k, v in list(import_dict.items()):
             if k in keys:
-                print(("ADDING %s: %s" %(k, v)))
                 if isinstance(v, list):
                     s = str(v[0])
                     for i in range(1, len(v)):
