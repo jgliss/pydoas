@@ -11,29 +11,25 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 # See BSD 3-Clause License for more details 
 # (https://opensource.org/licenses/BSD-3-Clause)
-from datetime import datetime, timedelta
+from datetime import datetime
 from os.path import join, exists
 from os import listdir
 import csv
 from warnings import warn
 from numpy import asarray, shape 
 
-from .inout import get_import_info
-from .helpers import to_datetime
+from pydoas.inout import get_import_info
+from pydoas.helpers import to_datetime
 
 class ResultImportSetup(object):
-    """Setup class for spectral result imports from text like files """
-    def __init__(self, base_dir=None, start=datetime(1900, 1, 1),
-                 stop=datetime(3000, 1, 1), meta_import_info="doasis",
-                 result_import_dict={}, default_dict={},
-                 doas_fit_err_factors={}, dev_id="",
-                 lt_to_utc_offset=timedelta(0.0)):
-        """
-        :param str base_dir: folder containing resultfiles
-        :param datetime start: time stamp of first spectrum
-        :param datetime stop: time stamp of last spectrum
-        
-        :param meta_import_info: Specify the result file format and columns
+    """
+    Setup class for spectral result imports from text like files 
+    
+    Args:
+        base_dir: folder containing resultfiles
+        start: time stamp of first spectrum
+        stop: time stamp of last spectrum
+        meta_import_info: Specify the result file format and columns
             for meta information (see als file import_info.txt or example
             script 2). Input can be str or dict. In case a string is 
             provided, it is assumed, that the specs are defined in 
@@ -41,8 +37,7 @@ class ResultImportSetup(object):
             from this file (using :func:`get_import_info`, e.g. with arg = 
             ``doasis``). If a dictionary is provided, the information is 
             directly set from the provided dictionary. 
-                
-        :param dict result_import_dict: specify file and header information for 
+        result_import_dict: specify file and header information for 
             import. Keys define the used abbreveations after import, the 
             values to each key consist of a list with 2 elements: the first 
             specifies the UNIQUE string which is used to identify this 
@@ -62,15 +57,14 @@ class ResultImportSetup(object):
             scenario result files with fit Ids ``["f01", "f02"]`` 
             (UNIQUE substrings in FitScenario file names.
             
-            Exemplary file name:
+            Example file name:
             
                 ``D130909_S0628_i6_f19_r20_f01so2.dat``
                 
             This (exemplary) filename convention is used for the example 
             result files shipped with this package (see folder 
             pydoas/data/doasis_resultfiles) which include fit result files
-            from the software `DOASIS <https://doasis.iup.uni-heidelberg.
-            de/bugtracker/projects/doasis/>`_.
+            from the software `DOASIS.
             
             The delimiter for retrieving info from these file names is "_", 
             the first substring provides info about the date (day), the 
@@ -83,32 +77,31 @@ class ResultImportSetup(object):
             Each resultfile must therefore include a unique ID in the file
             name by which it can be identified.
         
-        :param dict default_dict: specify default species,
+        default_dict: specify default species,
             e.g.::
         
                 dict_like = {"so2"     :   "f02",
                              "o3"      :   "f01"}
                         
-        :param dict doas_fit_err_factors: fit correction factors 
+        doas_fit_err_factors: fit correction factors 
             (i.e. factors by which the DOAS fit error is increased)::
                 
                 dict_like = {"so2"     :   "f02",
                              "o3"      :   "f01"}
                              
-        :param str dev_id: string ID for DOAS device (of minor importance)
-        :param timedelta lt_to_utc_offset: specify time zone offset (will 
-            be added on data import if applicable).
-                        
-        
-        """
+        dev_id: string ID for DOAS device (of minor importance)
+    """
+    def __init__(self, base_dir=None, start=datetime(1900, 1, 1),
+                 stop=datetime(3000, 1, 1), meta_import_info="doasis",
+                 result_import_dict={}, default_dict={},
+                 doas_fit_err_factors={}, dev_id=""):
+    
         self.base_dir = base_dir
         self._start = None
         self._stop = None
         
         self.start = start
         self.stop = stop
-        
-        self.lt_to_utc_offset = lt_to_utc_offset #currently unused ...
         
         self.dev_id = dev_id
         
@@ -129,17 +122,13 @@ class ResultImportSetup(object):
         elif isinstance(meta_import_info, dict):
             self.meta_import_info.update(meta_import_info)
         
-        if not all([x in list(self.meta_import_info.keys()) for x in\
-                                            self.minimum_meta_keys]):
+        if not all([x in list(self.meta_import_info.keys()) for x in self.minimum_meta_keys]):
             raise ImportError("Please specify at least the following "
                 "parameters: %s, available keys are: %s" 
                 %(self.minimum_meta_keys, list(self.meta_import_info.keys())))
-        if self.access_type == "header_str" and not\
-                    self.meta_import_info["has_header_line"]:
+        if self.access_type == "header_str" and not self.meta_import_info["has_header_line"]:
             raise Exception("Invalid combination of result file settings: "
                 "has_header_line == False and access_type == header_str")
-        if not result_import_dict:
-            self.auto_detect_
             
     @property
     def start(self):
@@ -151,7 +140,7 @@ class ResultImportSetup(object):
         try:
             self._start = to_datetime(val)
         except:
-            warn("Input %s could not be assigned to start time in setup" %val)
+            warn(f"Input {val} could not be assigned to start time in setup")
     
     @property
     def stop(self):
@@ -163,7 +152,7 @@ class ResultImportSetup(object):
         try:
             self._stop = to_datetime(val)
         except:
-            warn("Input %s could not be assigned to stop time in setup" %val)
+            warn(f"Input {val} could not be assigned to stop time in setup")
     
     @property
     def base_path(self):
@@ -238,7 +227,6 @@ class ResultImportSetup(object):
         """
         fit_ids = self.get_fit_ids()
         if not bool(fit_ids):
-            #print "Could not set default, fit IDs not accessible..."
             return False
         for species, info in list(self.import_info.items()):
             if species in dict_like:
@@ -273,11 +261,6 @@ class ResultImportSetup(object):
             else:
                 facs[fit_id] = 3.0
         self.doas_fit_err_factors = facs
-     
-    @property
-    def xs(self):
-        """Returns list with xs names"""
-        return self.get_xs_names
         
     def get_xs_names(self):
         """Set and return the string IDs of all fitted species"""
@@ -441,7 +424,6 @@ class DataImport(object):
         import_info.txt, this file can also be used to create new filetypes
         """
         info = self.setup.meta_import_info
-        #info = get_import_info(self.setup.res_type)
         for k,v in list(info.items()):
             self[k] = v
     

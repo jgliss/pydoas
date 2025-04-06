@@ -11,70 +11,78 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 # See BSD 3-Clause License for more details 
 # (https://opensource.org/licenses/BSD-3-Clause)
+
 from datetime import datetime, timedelta, date
 from numpy import asarray, full, polyfit, poly1d, logical_and, polyval
 from pandas import Series, DataFrame
 from matplotlib.pyplot import subplots
 from matplotlib.dates import DateFormatter
 
-#from .setup import ResultImportSetup
-from .helpers import to_datetime
-from .dataimport import DataImport, ResultImportSetup
+from pydoas.helpers import to_datetime
+from pydoas.dataimport import DataImport, ResultImportSetup
             
 class DatasetDoasResults(object):
-    """A Dataset for DOAS fit results import and processing"""
-    def __init__(self, setup=None, init=1, **kwargs):
-        """Initialisation of object
-        
-        :param ResultImportSetup setup: setup specifying  all necessary import 
+    """A Dataset for DOAS fit results import and processing
+    
+    Attributes:
+        setup (ResultImportSetup): setup specifying all necessary import 
             settings (please see documentation of :class:`ResultImportSetup`
             for setup details)
-        :param **kwargs: alternative way to setup ``self.setup`` 
+        raw_results (dict): dictionary containing the imported results
+
+    Args:
+        setup (ResultImportSetup): setup specifying all necessary import 
+            settings (please see documentation of :class:`ResultImportSetup`
+            for setup details)
+        init (int): if 1, the raw results will be loaded immediately
+        **kwargs: alternative way to setup :attr:`setup` 
             (:class:`ResultImportSetup` object), which is only used in case
-            no input parameter **setup** is invalid. Valid keyword arguments
-            are input parameters of :class:`ResultImportSetup` object.
-            
-        """
+            input parameter **setup** is None.
+
+    """
+    def __init__(self, setup: ResultImportSetup = None, init: bool = 1, **kwargs):
+        
         self.setup = None
         self.raw_results = {}
         
         self.load_input(setup, **kwargs)
         if init:
             self.load_raw_results()
-        #self.change_time_ival(start,stop)
             
-    def load_input(self, setup=None, **kwargs):
+    def load_input(self, setup: ResultImportSetup = None, **kwargs):
         """Process input information
         
-        Writes ``self.setup`` based on setup
-        
-        :param setup: is set if valid (i.e. if input is 
-            :class:`ResultImportSetup`)        
-        :param **kwargs: - keyword arguments for new :class:`ResultImportSetup`
-            (are used in case first parameter is invalid)
+        Args:
+            setup (ResultImportSetup): setup specifying all necessary import 
+                settings (please see documentation of :class:`ResultImportSetup`
+                for setup details)
+            **kwargs: alternative way to setup :attr:`setup` 
+                (:class:`ResultImportSetup` object), which is only used in case
+                input parameter **setup** is None.   
+
         """
         if not isinstance(setup, ResultImportSetup):
             setup = ResultImportSetup(**kwargs)
         self.setup = setup
     
     @property
-    def base_path(self):
-        """Returns current basepath of resultfiles (from ``self.setup``)"""
+    def base_path(self) -> str:
+        """Basepath of resultfiles"""
         return self.setup.base_path
         
     @property
-    def start(self):
-        """Returns start date and time of dataset (from ``self.setup``)"""
+    def start(self) -> datetime:
+        """Start date and time of dataset"""
         return self.setup.start
         
     @property
-    def stop(self):
-        """Returns stop date and time of dataset (from ``self.setup``)"""
+    def stop(self) -> datetime:
+        """Stop date and time of dataset"""
         return self.setup.stop
     
     @property
-    def dev_id(self):
-        """Returns device ID of dataset (from ``self.setup``)"""
+    def dev_id(self) -> str:
+        """Device ID of dataset"""
         return self.setup.dev_id
     
     @property
@@ -82,16 +90,15 @@ class DatasetDoasResults(object):
         """Returns information about result import details"""
         return self.setup.import_info
         
-    def change_time_ival(self, start, stop):
+    def change_time_ival(self, start: datetime, stop: datetime) -> None:
         """Change the time interval for the considered dataset
         
-        :param datetime start: new start time
-        :param datatime stop: new stop time
-        
-        .. note::
-        
+        Note: 
             Previously loaded results will be deleted
-            
+
+        Args:
+            start (datetime): new start time
+            stop (datetime): new stop time    
         """
         if isinstance(start, datetime):
             self.start = start
@@ -99,8 +106,18 @@ class DatasetDoasResults(object):
             self.stop = stop
         self.raw_results = {}
         
-    def load_raw_results(self):
-        """Try to load all results as specified in ``self.setup``"""
+    def load_raw_results(self) -> bool:
+        """Try to load all results as specified in the setup
+
+        This method will try to load all results as specified in the setup. If
+        the import setup is not complete, an exception will be raised.
+        
+        Returns:
+            bool: True if data is loaded, False otherwise
+
+        Raises:
+            AttributeError: If the import setup is not complete
+        """
         if not self.setup.complete():
             raise AttributeError("Import setup is not complete")
         access = DataImport(self.setup)
@@ -110,10 +127,19 @@ class DatasetDoasResults(object):
             return True
         return False
     
-    def has_data(self, fit_id, species_id, start=None, stop=None):
-        """Checks if specific data is available"""
-        if not (fit_id in self.raw_results and species_id in\
-                                                self.raw_results[fit_id]):
+    def has_data(self, fit_id: str, species_id: str, start: datetime = None, stop: datetime = None) -> bool:
+        """Checks if specific data is available
+        
+        Args:
+            fit_id (str): ID of the fit scenario
+            species_id (str): ID of the species
+            start (datetime, optional): Start datetime for the data check
+            stop (datetime, optional): Stop datetime for the data check
+        
+        Returns:
+            bool: True if data is available, False otherwise
+        """
+        if not (fit_id in self.raw_results and species_id in self.raw_results[fit_id]):
             return False
         if all([isinstance(x, datetime) for x in [start, stop]]):
             ts = self.raw_results[fit_id]["start"]
@@ -121,8 +147,15 @@ class DatasetDoasResults(object):
                 return False
         return True
     
-    def get_spec_times(self, fit):
-        """Returns start time and stop time arrays for spectra to a given fit"""
+    def get_spec_times(self, fit: str) -> tuple:
+        """Returns start time and stop time arrays for spectra to a given fit
+        
+        Args:
+            fit (str): ID of the fit scenario
+        
+        Returns:
+            tuple: start and stop time arrays for the spectra
+        """
 
         start = asarray(self.raw_results[fit]["start"])
         stop = asarray(self.raw_results[fit]["stop"])
@@ -214,9 +247,6 @@ class DatasetDoasResults(object):
         return DoasResults(dat, times, start, stop, dat_err, species_id,\
                                                                 fit_id, 3)
 
-    """
-    HELPERS
-    """
     def get_default_fit_id(self, species_id):
         """Get default fit scenario id for species
         
@@ -240,10 +270,7 @@ class DatasetDoasResults(object):
             return 1
         except:
             return 0
-            
-    """
-    PLOTTING ETC...
-    """
+       
     def plot(self,species_id, fit_id=None, start=None, stop=None, **kwargs):
         """Plot DOAS results"""
         res = self.get_results(species_id, fit_id, start, stop)
@@ -263,7 +290,12 @@ class DatasetDoasResults(object):
         :param str fit_id_yaxis: fit scenario ID of y axis species (e.g. "f02")
         :param str species_id_zaxis: string ID of z axis species (e.g. "o3")
         :param str fit_id_zaxis: fit scenario ID of z axis species (e.g. "f01")
-        :param bool linF
+        :param datetime start: start time stamp for data retrieval
+        :param datetime stop: stop time stamp for data retrieval
+        :param ax: matplotlib axes object (None), if provided, then the result 
+            is plotted into the axes
+        :param kwargs: keyword arguments for matplotlib scatter plot
+            (e.g. color, marker, edgecolor, etc.)
         """
         res_x = self.get_results(species_id_xaxis, fit_id_xaxis, start, stop)
         res_y = self.get_results(species_id_yaxis, fit_id_yaxis, start, stop)
@@ -291,9 +323,7 @@ class DatasetDoasResults(object):
             self.linear_regression(res_x.values, res_y.values, ax = ax)
         ax.legend(loc = 'best', fancybox = True, framealpha = 0.5, fontsize = 12)
         return ax 
-    """
-    FITTING / OPTIMISATION ETC...
-    """
+    
     def linear_regression(self, x_data, y_data, mask = None, ax = None):
         """Perform linear regression and return parameters
         
@@ -342,8 +372,7 @@ class DatasetDoasResults(object):
         return ("\nDOAS result dataset\n-------------------\n" + str(self.setup))
 
 class DoasResults(Series):
-    """Data time series object inheriting from :class:`pandas.Series` for
-    handling and analysing DOAS fit results
+    """Data time series for handling and analysing DOAS fit results
     
     :param arraylike data: DOAS fit results (column densities)
     :param arraylike index: Time stamps of data points
@@ -460,22 +489,6 @@ class DoasResults(Series):
         """
         return self[self > self.fit_errs * self.fit_errs_corr_fac]
         
-#==============================================================================
-#     def __div__(self, data):
-#         if not isinstance(data, SpectralResults):
-#             raise TypeError("Invalid divisor")
-#         id=self.speciesID+data.speciesID
-#         fitid=self.fit_id+data.fit_id
-#         return SpectralResults(self.data/data.data,fit_errs=None, speciesID=id,\
-#             fit_id=fitid, start=self.specTimes.start,stop=self.specTimes.start)
-#==============================================================================
-    
-#==============================================================================
-#     def shift(self):
-#         """Shift series index"""
-#         shifted = super(DoasResults, self).shift(*args, **kwargs)
-#         return 
-#==============================================================================
     def plot(self, date_fmt=None, **kwargs):
         """Plot time series
         
@@ -496,7 +509,6 @@ class DoasResults(Series):
                 ax.xaxis.set_major_formatter(DateFormatter(date_fmt))
         except:
             pass
-        #ax.xaxis.set_major_formatter(date_formatter)
         ax.set_ylabel(self.species)
         return ax
     
@@ -516,24 +528,21 @@ class DoasResults(Series):
             new.start_acq += timedelta
             new.stop_acq += timedelta
         return new
-        
-        
-        
-    """Magic methods"""
+    
     def _add__(self, inp):
         s = super(DoasResults, self).__add__(inp)
-        return DoasResults(s.values, s.index)#, self.start_acq, self.stop_acq)    
+        return DoasResults(s.values, s.index)   
         
     def __sub__(self, inp):
         s = super(DoasResults, self).__sub__(inp)
-        return DoasResults(s.values, s.index)#, start_acq = None, stop_acq)
+        return DoasResults(s.values, s.index)
     
     def __div__(self, inp):
         s = super(DoasResults, self).__div__(inp)
-        return DoasResults(s.values, s.index)#, self.start_acq, self.stop_acq)
+        return DoasResults(s.values, s.index)
     
     def __mul__(self, inp):
         s = super(DoasResults, self).__mul__(inp)
-        return DoasResults(s.values, s.index)#, self.start_acq, self.stop_acq)    
+        return DoasResults(s.values, s.index)    
         
     

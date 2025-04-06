@@ -46,3 +46,4 @@ pydoas = [
 
 [tool.setuptools_scm]
 write_to = "pydoas/_version.py"
+
