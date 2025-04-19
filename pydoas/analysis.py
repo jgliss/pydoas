@@ -370,27 +370,18 @@ class DoasResults(Series):
     :param arraylike fit_errs: DOAS fit errors
     :param string species_id: String specifying the fitted species
     :param string fit_id: Unique string specifying the fit scenario used
-    :param int fit_errs_corr_fac: DOAS fit error correction factor
-    
-    .. todo::
-    
-        Finish magic methods, i.e. apply error propagation, think about time
-        merging etc...
-        
+    :param int fit_errs_corr_fac: DOAS fit error correction factor 
     """
-    fit_errs = None
-    start_acq = []
-    stop_acq = []
-    fit_id = None
-    fit_errs_corr_fac = None
-    def __init__(self, data, index = None, start_acq = [], stop_acq = [],\
-                            fit_errs = None, species_id = "", fit_id = "",\
-                                fit_errs_corr_fac = 1.0):
+    def __init__(
+            self, data, index = None, start_acq = [], stop_acq = [],
+            fit_errs = None, species_id = "", fit_id = "",
+            fit_errs_corr_fac = 1.0):
+        
         if isinstance(data, Series):
             index = data.index
             species_id = data.name
             data = data.values
-        super(DoasResults, self).__init__(data, index, name = species_id)
+        super(DoasResults, self).__init__(data, index, name=species_id)
         
         self.fit_errs = fit_errs
 
