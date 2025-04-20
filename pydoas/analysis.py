@@ -13,7 +13,8 @@
 # (https://opensource.org/licenses/BSD-3-Clause)
 
 from datetime import datetime, timedelta, date
-from numpy import asarray, full, polyfit, poly1d, logical_and, polyval
+from typing import Optional, Sequence
+from numpy import asarray, full, polyfit, poly1d, logical_and, polyval, ndarray
 from pandas import Series, DataFrame
 from matplotlib.pyplot import subplots
 from matplotlib.dates import DateFormatter
@@ -373,16 +374,32 @@ class DoasResults(Series):
     :param int fit_errs_corr_fac: DOAS fit error correction factor 
     """
     def __init__(
-            self, data, index = None, start_acq = [], stop_acq = [],
-            fit_errs = None, species_id = "", fit_id = "",
-            fit_errs_corr_fac = 1.0):
-        
+            self, 
+            data: Sequence | ndarray | Series, 
+            index: Optional[Sequence | ndarray] = None, 
+            start_acq: Optional[Sequence | ndarray] = None, 
+            stop_acq: Optional[Sequence | ndarray] = None,
+            fit_errs: Optional[Sequence | ndarray] = None, 
+            species_id: Optional[str] = None, 
+            fit_id: Optional[str] = None,
+            fit_errs_corr_fac=1.0):
+        if start_acq is None:
+            start_acq = []
+        if stop_acq is None:
+            stop_acq = []
+        if species_id is None:
+            species_id = ""
+        if fit_id is None:
+            fit_id = ""
         if isinstance(data, Series):
             index = data.index
             species_id = data.name
             data = data.values
-        super(DoasResults, self).__init__(data, index, name=species_id)
-        
+        super().__init__(data, index)
+        self.name = species_id
+        if fit_errs is None:
+            fit_errs = []
+            
         self.fit_errs = fit_errs
 
         self.fit_id = fit_id        
@@ -393,18 +410,12 @@ class DoasResults(Series):
     @property
     def start(self):
         """Start time of data"""
-        try:
-            return self.index[0]
-        except:
-            pass
+        return self.index[0]
     
     @property    
     def stop(self):
         """Stop time of data"""
-        try:
-            return self.index[-1]
-        except:
-            pass
+        return self.index[-1]
         
     @property
     def species(self):
