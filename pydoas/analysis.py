@@ -395,8 +395,7 @@ class DoasResults(Series):
             index = data.index
             species_id = data.name
             data = data.values
-        super().__init__(data, index)
-        self.name = species_id
+        super().__init__(data, index, name=species_id)
         if fit_errs is None:
             fit_errs = []
             
