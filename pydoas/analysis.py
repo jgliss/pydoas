@@ -13,7 +13,7 @@
 # (https://opensource.org/licenses/BSD-3-Clause)
 
 from datetime import datetime, timedelta, date
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 from numpy import asarray, full, polyfit, poly1d, logical_and, polyval, ndarray
 from pandas import Series, DataFrame
 from matplotlib.pyplot import subplots
@@ -375,11 +375,11 @@ class DoasResults(Series):
     """
     def __init__(
             self, 
-            data: Sequence | ndarray | Series, 
-            index: Optional[Sequence | ndarray] = None, 
-            start_acq: Optional[Sequence | ndarray] = None, 
-            stop_acq: Optional[Sequence | ndarray] = None,
-            fit_errs: Optional[Sequence | ndarray] = None, 
+            data: Union[Sequence, ndarray, Series], 
+            index: Optional[Union[Sequence, ndarray]] = None, 
+            start_acq: Optional[Union[Sequence, ndarray]] = None, 
+            stop_acq: Optional[Union[Sequence, ndarray]] = None,
+            fit_errs: Optional[Union[Sequence, ndarray]] = None, 
             species_id: Optional[str] = None, 
             fit_id: Optional[str] = None,
             fit_errs_corr_fac=1.0):
