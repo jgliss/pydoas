@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A Python toolbox for post-analysis of DOAS (Differential Optical Absorption Spectroscopy) results"
 readme = "README.rst"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = {text = "BSD-3-Clause"}
 
 dependencies = [
@@ -23,6 +23,7 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -46,3 +47,4 @@ pydoas = [
 
 [tool.setuptools_scm]
 write_to = "pydoas/_version.py"
+

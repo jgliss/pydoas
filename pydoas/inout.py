@@ -17,15 +17,8 @@ This module contains I/O routines for DOAS result files
 from os.path import join
 from os import listdir
 from collections import OrderedDict as od
+from typing import Optional
 
-def get_data_dirs():
-    """Get directories containing example package data
-    
-    :returns: list of package subfolders containing data files
-    """
-    from pydoas import _LIBDIR    
-    return listdir(join(_LIBDIR, "data"))
-    
 def get_data_files(which = "doasis"):
     """Get all example result files from package data"""
     from pydoas import _LIBDIR
@@ -82,7 +75,6 @@ def get_import_info(resulttype="doasis"):
         found = 0
         for line in f: 
             if "ENDTYPE" in line and found:
-                print(dat)
                 return dat
             spl = line.split(":", 1)
             if spl[0] == "type" and spl[1].split("#")[0].strip() ==\
@@ -96,8 +88,6 @@ def get_import_info(resulttype="doasis"):
                         dat[k] = d
 
                     elif k == "delim":
-                        print(decode(d[0],"unicode-escape"))
-                        #dat[k] = str(d[0].decode("unicode_escape"))
                         dat[k] = decode(d[0], "unicode-escape")
                     else:
                         try:
@@ -112,20 +102,8 @@ def import_info_file():
     """Return path to supplementary file import_info.txt"""
     from pydoas import _LIBDIR
     return join(_LIBDIR, join("data", "import_info.txt"))
-
-def _fake_import_specs():
-    """Returns dictionary for adding a new fake import type"""
-    return od([("type", "fake"),
-               ("access_type", "col_index"),
-               ("file_type", "csv"),
-               ("time_str_formats", "%Y%m%d%H%M"),
-               ("delim", ";"),
-               ("start", 0), #col num
-               ("stop", 1), #col num
-               ("bla" , "Blub"), #invalid (for test purpose)
-               ("num_scans", 4)]) #colnum
     
-def write_import_info_to_default_file(import_dict):
+def write_import_info_to_default_file(import_dict: dict, file: Optional[str] = None):
     try:
         if import_type_exists(import_dict["type"]):
             raise TypeError("Import specifications for ID %s already exists in "
@@ -134,13 +112,12 @@ def write_import_info_to_default_file(import_dict):
     except KeyError:
         raise KeyError("Please specify type in dictionary")
     keys = list(get_import_info().keys())
-    p = import_info_file()
-    print(("Writing to %s" %p))
-    with open(p, "a") as myfile:
+    if file is None:
+        file = import_info_file()
+    with open(file, "a") as myfile:
         myfile.write("\n\nNEWTYPE\n")
         for k, v in list(import_dict.items()):
             if k in keys:
-                print(("ADDING %s: %s" %(k, v)))
                 if isinstance(v, list):
                     s = str(v[0])
                     for i in range(1, len(v)):

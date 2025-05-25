@@ -37,7 +37,9 @@ def main():
                             ("num_scans", 4)]) #colnum
     
     # You could create a new default data type now by calling
-    # pydoas.inout.write_import_info_to_default_file(meta_import_info)
+    from tempfile import NamedTemporaryFile
+    with NamedTemporaryFile(mode='w+', delete=False) as temp_file:
+        pydoas.inout.write_import_info_to_default_file(meta_import_info, file=temp_file.name)
     # which would add these specs to the import_info.txt file and which
     # would allow for fast access using 
     # meta_info_dict = pydoas.inout.get_import_info("fake")

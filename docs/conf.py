@@ -1,5 +1,4 @@
 import os
-import sys
 import matplotlib
 from importlib.metadata import version as get_version
 
@@ -13,12 +12,7 @@ author = "Jonas Gliss"
 copyright = "2016, Jonas Gliss"
 
 # Versioning
-try:
-    version = get_version("pydoas")
-except Exception as e:
-    print(f"FAILED TO RETRIEVE PYDOAS VERSION. Reason: {e}")
-    version = "0.0.0"
-
+version = get_version("pydoas")
 release = version
 
 # Sphinx extensions
